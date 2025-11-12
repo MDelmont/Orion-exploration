@@ -1,0 +1,1 @@
+visionné les cartes du jeux
