@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Le Voyage d'Orion &ndash; Visualiseur de cartes</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="branding">
+        <h1>Le Voyage d'Orion</h1>
+        <p>Visualiseur de cartes</p>
+      </div>
+      <nav class="category-nav" aria-label="Navigation des catégories">
+        <button type="button" class="nav-button" data-category="histoire">
+          Histoires
+        </button>
+        <button type="button" class="nav-button" data-category="enigme">
+          Énigmes
+        </button>
+        <button type="button" class="nav-button" data-category="encyclopedie">
+          Encyclopédie
+        </button>
+        <button type="button" class="nav-button" data-category="carte">
+          Carte du ciel
+        </button>
+        <button type="button" class="nav-button" data-category="epinglees">
+          Épinglées
+        </button>
+      </nav>
+    </header>
+
+    <div class="app-shell">
+      <aside id="sidebar" aria-label="Liste des cartes">
+        <div class="sidebar-header">
+          <h2>Cartes</h2>
+          <p id="sidebar-subtitle"></p>
+        </div>
+        <ul id="cards-list"></ul>
+        <p id="sidebar-empty" class="empty-state hidden">
+          Aucune carte à afficher pour cette vue.
+        </p>
+      </aside>
+
+      <main id="main-panel">
+        <section id="cards-section" aria-live="polite">
+          <div id="cards-container" class="cards-grid"></div>
+          <p id="cards-empty" class="empty-state hidden">
+            Pas de carte dans cette catégorie pour le moment.
+          </p>
+        </section>
+
+        <section
+          id="sky-map-section"
+          class="hidden"
+          aria-label="Carte du ciel interactive"
+        >
+          <div class="sky-map-controls">
+            <h2>Carte du ciel</h2>
+            <div class="buttons">
+              <button id="zoom-out" type="button" aria-label="Zoom arrière">
+                &minus;
+              </button>
+              <button id="zoom-reset" type="button">
+                Centre
+              </button>
+              <button id="zoom-in" type="button" aria-label="Zoom avant">
+                +
+              </button>
+            </div>
+            <p>Molette pour zoomer, cliquer-glisser pour déplacer.</p>
+          </div>
+          <div id="sky-map-stage">
+            <img
+              id="sky-map-image"
+              src="images/cartes/Carte_du_ciel.svg"
+              alt="Carte du ciel du Voyage d'Orion"
+              draggable="false"
+            />
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div
+      id="inspection-overlay"
+      class="hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="inspection-title"
+    >
+      <div class="inspection-content">
+        <button
+          id="close-inspection"
+          class="icon-button"
+          type="button"
+          aria-label="Fermer l'inspection"
+        >
+          &times;
+        </button>
+        <h2 id="inspection-title"></h2>
+        <img id="inspection-image" alt="" draggable="false" />
+        <div class="inspection-actions">
+          <button
+            id="inspection-flip"
+            type="button"
+            aria-label="Retourner la carte"
+            title="Retourner"
+          ></button>
+          <button
+            id="inspection-pin"
+            type="button"
+            aria-label="Épingler cette carte"
+            title="Épingler"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
