@@ -35,6 +35,30 @@ html {
   background: #01010a;
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-pin-active) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-pin-active);
+  border-radius: 999px;
+  border: 2px solid transparent;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 215, 106, 0.8);
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -185,12 +209,14 @@ body::after {
 #sidebar {
   background: transparent;
   border-right: 1px solid transparent;
-  backdrop-filter: none;
-  padding: 1.2rem;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  min-height: 0;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  max-height: calc(100vh - 2rem);
 }
 
 .sidebar-header h2 {
@@ -213,6 +239,7 @@ body::after {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  max-height: calc(100vh - 8rem);
 }
 
 #cards-list li {

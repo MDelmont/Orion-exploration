@@ -199,13 +199,20 @@ function renderSidebar() {
     const item = document.createElement("li");
     item.dataset.cardId = card.id;
     if (card.category === "encyclopedie") {
-      const strong = document.createElement("strong");
-      strong.textContent = `${card.title}`;
-      item.appendChild(strong);
+      item.textContent = card.title;
     } else {
+      const div = document.createElement("div");      // une div normale
       const strong = document.createElement("strong");
-      strong.textContent = `${card.number} - ${card.title}`;
-      item.appendChild(strong);
+
+      strong.textContent = card.number;               // le nombre en <strong>
+
+      // on met d'abord le <strong> dans la div
+      div.appendChild(strong);
+
+      // puis on ajoute le texte normal derrière
+      div.appendChild(document.createTextNode(` - ${card.title}`));
+
+      item.appendChild(div);
     }
     const faceLabel = document.createElement("span");
     faceLabel.textContent = getCardFace(card.id) === "recto" ? "Recto" : "Verso";
