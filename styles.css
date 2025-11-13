@@ -2,19 +2,19 @@
   color-scheme: dark;
   font-family: "Segoe UI", Roboto, system-ui, -apple-system, BlinkMacSystemFont,
     "Helvetica Neue", sans-serif;
-  --color-bg: #05060a;
-  --color-panel: #0f1120;
-  --color-panel-light: #14162b;
-  --color-accent: #9b5bff;
-  --color-accent-soft: #c0a4ff33;
+  --color-bg: #010212;
+  --color-panel: transparent;
+  --color-panel-light: transparent;
+  --color-accent: #ffd76a;
+  --color-accent-soft: rgba(255, 215, 106, 0.2);
   --color-pin-active: #ffd76a;
-  --color-pin-active-soft: rgba(255, 215, 106, 0.18);
-  --color-focus-ring: #ffffff;
-  --card-shadow: 0 10px 35px rgba(5, 6, 10, 0.55);
-  --color-text: #f3f1ff;
-  --color-text-muted: #a7abc2;
-  --color-border: #252942;
-  --card-height: auto;
+  --color-pin-active-soft: rgba(255, 215, 106, 0.25);
+  --color-focus-ring: #ffd76a;
+  --card-shadow: 0 0 30px rgba(255, 215, 106, 0.08);
+  --color-text: #ffd76a;
+  --color-text-muted: rgba(255, 215, 106, 0.65);
+  --color-border: rgba(255, 215, 106, 0.2);
+  --card-image-height: auto;
 }
 
 *,
@@ -23,19 +23,112 @@
   box-sizing: border-box;
 }
 
+body,
+button,
+input,
+select,
+textarea {
+  color: var(--color-text);
+}
+
+html {
+  background: #01010a;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(circle at top, #111635 0%, #05060a 55%);
   color: var(--color-text);
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+  isolation: isolate;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  transform: translateZ(0);
+}
+
+body::before {
+  background: linear-gradient(180deg, #01010a 0%, #050518 60%, #01010a 100%);
+  opacity: 1;
+}
+
+body::after {
+  background-image: radial-gradient(
+      1px 1px at 15px 25px,
+      rgba(255, 255, 255, 0.9),
+      transparent
+    ),
+    radial-gradient(
+      1px 1px at 60px 90px,
+      rgba(255, 215, 106, 0.85),
+      transparent
+    ),
+    radial-gradient(
+      1px 1px at 110px 160px,
+      rgba(140, 190, 255, 0.85),
+      transparent
+    ),
+    radial-gradient(
+      2px 2px at 180px 40px,
+      rgba(255, 255, 255, 0.75),
+      transparent
+    ),
+    radial-gradient(
+      2px 2px at 240px 210px,
+      rgba(255, 215, 106, 0.8),
+      transparent
+    ),
+    radial-gradient(
+      1px 1px at 320px 130px,
+      rgba(255, 255, 255, 0.95),
+      transparent
+    ),
+    radial-gradient(
+      1px 1px at 400px 260px,
+      rgba(150, 210, 255, 0.85),
+      transparent
+    );
+  background-size: 140px 140px, 200px 200px, 260px 260px, 320px 320px,
+    420px 420px, 520px 520px, 640px 640px;
+  opacity: 0.9;
+  animation: driftStars 120s linear infinite, twinkle 5s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+
+@keyframes driftStars {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-300px);
+  }
+}
+
+@keyframes twinkle {
+  0% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.45;
+  }
 }
 
 .app-header {
-  background: rgba(5, 6, 10, 0.85);
-  backdrop-filter: blur(6px);
-  border-bottom: 1px solid var(--color-border);
+  background: transparent;
+  backdrop-filter: none;
+  border-bottom: 1px solid transparent;
   padding: 1.2rem clamp(1rem, 4vw, 2.5rem);
   display: flex;
   flex-wrap: wrap;
@@ -61,9 +154,9 @@ body {
 }
 
 .nav-button {
-  background: var(--color-panel-light);
+  background: transparent;
   color: var(--color-text);
-  border: 1px solid transparent;
+  border: 1px solid rgba(255, 215, 106, 0.3);
   border-radius: 999px;
   padding: 0.45rem 1.4rem;
   font-size: 0.95rem;
@@ -72,7 +165,8 @@ body {
 }
 
 .nav-button:hover {
-  border-color: var(--color-accent-soft);
+  border-color: rgba(255, 215, 106, 0.8);
+  background: rgba(255, 215, 106, 0.12);
 }
 
 .nav-button.active {
@@ -89,8 +183,9 @@ body {
 }
 
 #sidebar {
-  background: var(--color-panel);
-  border-right: 1px solid var(--color-border);
+  background: transparent;
+  border-right: 1px solid transparent;
+  backdrop-filter: none;
   padding: 1.2rem;
   display: flex;
   flex-direction: column;
@@ -122,7 +217,7 @@ body {
 
 #cards-list li {
   padding: 0.4rem 0.6rem;
-  border: 1px solid transparent;
+  border: none;
   border-radius: 0.35rem;
   cursor: pointer;
   font-size: 0.92rem;
@@ -130,6 +225,7 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 0.4rem;
+  background: transparent;
 }
 
 #cards-list li span {
@@ -139,8 +235,7 @@ body {
 
 #cards-list li:hover,
 #cards-list li.active {
-  border-color: var(--color-border);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 215, 106, 0.12);
 }
 
 main {
@@ -160,30 +255,33 @@ main {
 .cards-grid {
   flex: 1;
   overflow-y: auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 1rem;
-  padding: 1.2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
+  gap: 0.6rem;
+  padding: 0.6rem;
   align-content: start;
+
 }
 
 .card {
-  background: var(--color-panel);
-  border: 1px solid var(--color-border);
-  border-radius: 0.75rem;
-  padding: 0.9rem;
-  display: flex;
+  background: transparent;
+  border: none;
+  border-radius: 0.6rem;
+  padding: 0.45rem;
+  display: inline-flex;
   flex-direction: column;
-  gap: 0.7rem;
-  box-shadow: var(--card-shadow);
-  height: var(--card-height);
-  min-height: var(--card-height);
-  overflow: hidden;
-  position: relative;
+  gap: 0.35rem;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  text-align: center;
 }
 
 .card h3 {
   margin: 0;
+  text-align: center;
+  padding-bottom: 0.1rem;
   font-size: 1rem;
   line-height: 1.25;
   min-height: 2.6rem;
@@ -192,33 +290,48 @@ main {
   -webkit-box-orient: vertical;
   overflow: hidden;
   word-break: break-word;
+  color: var(--color-text);
 }
 
 .card img {
-  width: 100%;
-  border-radius: 0.5rem;
-  background: #030307;
-  border: 1px solid var(--color-border);
+  width: auto;
+  max-width: 100%;
+  height: var(--card-image-height);
+  margin: 0 auto;
+  border-radius: 0.65rem;
+  background: transparent;
+  border: none;
   cursor: zoom-in;
-  flex: 1;
   object-fit: contain;
+  display: block;
+  transition: box-shadow 0.3s ease, transform 0.4s ease;
+  transform-origin: center;
+  backface-visibility: hidden;
+}
+
+.card img.is-flipping {
+  animation: card-flip 0.4s ease forwards;
 }
 
 .card-meta {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 0.82rem;
   color: var(--color-text-muted);
+  gap: 0.4rem;
+  margin-top: -0.15rem;
 }
 
 .card-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.8rem;
   margin-top: auto;
+  justify-content: space-between;
 }
 
 .card-actions button {
-  flex: 1;
+
   padding: 0.3rem;
   border: none;
   background: transparent;
@@ -236,12 +349,18 @@ main {
   transform: translateY(-1px);
 }
 
-.card-actions button[data-action="pin"] {
-  color: var(--color-text);
-}
+
 
 .card-actions button[data-action="pin"].pin-active,
 .card-actions button[data-action="pin"].pin-active:hover {
+  color: var(--color-pin-active);
+}
+
+#inspection-pin {
+  color: rgba(255, 215, 106, 0.55);
+}
+
+#inspection-pin.pin-active {
   color: var(--color-pin-active);
 }
 
@@ -250,13 +369,11 @@ main {
   box-shadow: 0 0 0 2px var(--color-accent-soft);
 }
 
-.card.active {
-  border-color: rgba(255, 255, 255, 0.65);
-  animation: card-pulse 1.2s ease-out;
-}
-
 .card.active img {
-  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 30px rgba(255, 215, 106, 0.45),
+    0 0 0 3px rgba(255, 215, 106, 0.5);
+  border: none;
+  transform: translateZ(0);
 }
 
 .pin-active {
@@ -284,6 +401,18 @@ main {
   }
 }
 
+@keyframes card-flip {
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(90deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+  }
+}
+
 .empty-state {
   text-align: center;
   color: var(--color-text-muted);
@@ -304,6 +433,11 @@ main {
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  padding: 0.8rem 1rem;
+  backdrop-filter: none;
 }
 
 .sky-map-controls h2 {
@@ -319,8 +453,8 @@ main {
   width: 2.4rem;
   height: 2.4rem;
   border-radius: 999px;
-  border: 1px solid var(--color-border);
-  background: var(--color-panel-light);
+  border: 1px solid rgba(255, 215, 106, 0.3);
+  background: transparent;
   color: var(--color-text);
   font-size: 1.1rem;
   cursor: pointer;
@@ -329,10 +463,10 @@ main {
 #sky-map-stage {
   flex: 1;
   min-height: 0;
-  border: 1px solid var(--color-border);
+  border: 1px solid rgba(255, 215, 106, 0.2);
   border-radius: 0.75rem;
   overflow: hidden;
-  background: radial-gradient(circle, #0b0f27 0%, #03040a 75%);
+  background: radial-gradient(circle, rgba(20, 24, 60, 0.8) 0%, #020312 75%);
   position: relative;
 }
 
@@ -353,7 +487,7 @@ main {
 #inspection-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(1, 2, 10, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -362,8 +496,9 @@ main {
 }
 
 .inspection-content {
-  background: var(--color-panel);
-  border: 1px solid var(--color-border);
+  background: rgba(5, 8, 25, 0.35);
+  border: 1px solid rgba(255, 215, 106, 0.25);
+  backdrop-filter: blur(12px);
   border-radius: 1rem;
   padding: 1.5rem;
   width: min(90vw, 600px);
@@ -381,8 +516,8 @@ main {
   width: 2.2rem;
   height: 2.2rem;
   border-radius: 999px;
-  border: 1px solid transparent;
-  background: var(--color-panel-light);
+  border: 1px solid rgba(255, 215, 106, 0.3);
+  background: rgba(0, 0, 0, 0.2);
   color: var(--color-text);
   font-size: 1.4rem;
   cursor: pointer;
@@ -391,8 +526,8 @@ main {
 .inspection-content img {
   width: 100%;
   border-radius: 0.6rem;
-  border: 1px solid var(--color-border);
-  background: #010103;
+  border: 1px solid rgba(255, 215, 106, 0.3);
+  background: transparent;
 }
 
 .inspection-actions {
@@ -402,7 +537,6 @@ main {
 
 .card-actions button svg,
 .inspection-actions button svg {
-  width: 1.35rem;
   height: 1.35rem;
   fill: currentColor;
   display: block;
@@ -413,8 +547,8 @@ main {
   flex: 1;
   padding: 0.65rem 0.9rem;
   border-radius: 0.5rem;
-  border: 1px solid var(--color-border);
-  background: var(--color-panel-light);
+  border: 1px solid rgba(255, 215, 106, 0.3);
+  background: transparent;
   color: var(--color-text);
   font-size: 1rem;
   cursor: pointer;
@@ -431,7 +565,7 @@ main {
 
   #sidebar {
     border-right: none;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid transparent;
     order: 1;
   }
 

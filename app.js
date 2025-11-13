@@ -12,8 +12,20 @@ const ICONS = {
   flip: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
     <path d="M12 2 7 7h4v2a5 5 0 1 0 5 5h-2a3 3 0 1 1-3-3h2V7h4z" />
   </svg>`,
-  pin: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <path d="M10 2h4v3l2 3v6l2 2v1h-6v5h-2v-5H4v-1l2-2V8l2-3z" />
+  pinOutline: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7"
+      stroke-linejoin="round"
+      d="M10 2h4v3l2 3v6l2 2v1h-6v5h-2v-5H4v-1l2-2V8l2-3z"
+    />
+  </svg>`,
+  pinFilled: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path
+      fill="currentColor"
+      d="M10 2h4v3l2 3v6l2 2v1h-6v5h-2v-5H4v-1l2-2V8l2-3z"
+    />
   </svg>`,
   inspect: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
     <path d="M12 5c5 0 9 4.5 10 6-1 1.5-5 6-10 6s-9-4.5-10-6c1-1.5 5-6 10-6zm0 2c-3.5 0-6.5 3-7.7 4C5.5 12 8.5 15 12 15s6.5-3 7.7-4C18.5 10 15.5 7 12 7zm0 2.5A2.5 2.5 0 1 1 9.5 12 2.5 2.5 0 0 1 12 9.5z" />
@@ -34,16 +46,44 @@ const state = {
 };
 
 const cardsById = new Map(cardsConfig.map((card) => [card.id, card]));
+const FLIP_ANIMATION_MS = 400;
 
 const elements = {};
+
+function formatCardTitle(card) {
+  if (card.category === "encyclopedie") {
+    return card.title;
+  }
+  return `${card.number} - ${card.title}`;
+}
+
+function setPinIcon(button, isPinned) {
+  if (!button) {
+    return;
+  }
+  button.innerHTML = isPinned ? ICONS.pinFilled : ICONS.pinOutline;
+}
+
+function getCardElement(cardId) {
+  if (!elements.cardsContainer) {
+    return null;
+  }
+  return elements.cardsContainer.querySelector(
+    `.card[data-card-id="${cardId}"]`
+  );
+}
+
+function getCardImageElement(cardId) {
+  return getCardElement(cardId)?.querySelector("img") ?? null;
+}
 
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
   cacheElements();
+  setPinIcon(elements.inspectionPinBtn, false);
   applyDisplaySettings();
   elements.inspectionFlipBtn.innerHTML = ICONS.flip;
-  elements.inspectionPinBtn.innerHTML = ICONS.pin;
   bindNavigation();
   bindInspectionControls();
   setupSkyMap();
@@ -77,11 +117,11 @@ function applyDisplaySettings() {
     cardDisplaySettings.cardHeight > 0
   ) {
     document.documentElement.style.setProperty(
-      "--card-height",
+      "--card-image-height",
       `${cardDisplaySettings.cardHeight}px`
     );
   } else {
-    document.documentElement.style.setProperty("--card-height", "auto");
+    document.documentElement.style.setProperty("--card-image-height", "auto");
   }
 }
 
@@ -158,9 +198,18 @@ function renderSidebar() {
   cards.forEach((card) => {
     const item = document.createElement("li");
     item.dataset.cardId = card.id;
-    item.innerHTML = `<strong>#${card.id}</strong> ${card.title}`;
+    if (card.category === "encyclopedie") {
+      const strong = document.createElement("strong");
+      strong.textContent = `${card.title}`;
+      item.appendChild(strong);
+    } else {
+      const strong = document.createElement("strong");
+      strong.textContent = `${card.number} - ${card.title}`;
+      item.appendChild(strong);
+    }
     const faceLabel = document.createElement("span");
     faceLabel.textContent = getCardFace(card.id) === "recto" ? "Recto" : "Verso";
+    item.append(" ");
     item.appendChild(faceLabel);
     item.addEventListener("click", () => focusCard(card.id));
     elements.sidebarList.appendChild(item);
@@ -212,7 +261,7 @@ function buildCardElement(card) {
   article.dataset.cardId = card.id;
 
   const title = document.createElement("h3");
-  title.textContent = `#${card.id} — ${card.title}`;
+  title.textContent = formatCardTitle(card);
   article.appendChild(title);
 
   const meta = document.createElement("div");
@@ -225,7 +274,7 @@ function buildCardElement(card) {
   const image = document.createElement("img");
   image.src = buildImageSrc(card, face);
   image.alt = `${card.title} (${face})`;
-  image.addEventListener("click", () => openInspection(card.id));
+  image.addEventListener("click", () => toggleFace(card.id));
   article.appendChild(image);
 
   const actions = document.createElement("div");
@@ -242,17 +291,14 @@ function buildCardElement(card) {
   const pinButton = document.createElement("button");
   pinButton.type = "button";
   pinButton.dataset.action = "pin";
-  pinButton.innerHTML = ICONS.pin;
+  const isPinned = state.pinned.has(card.id);
+  setPinIcon(pinButton, isPinned);
   pinButton.setAttribute(
     "aria-label",
-    state.pinned.has(card.id)
-      ? "Retirer des épinglées"
-      : "Épingler cette carte"
+    isPinned ? "Retirer des épinglées" : "Épingler cette carte"
   );
-  pinButton.title = state.pinned.has(card.id)
-    ? "Retirer des épinglées"
-    : "Épingler";
-  pinButton.classList.toggle("pin-active", state.pinned.has(card.id));
+  pinButton.title = isPinned ? "Retirer des épinglées" : "Épingler";
+  pinButton.classList.toggle("pin-active", isPinned);
   pinButton.addEventListener("click", () => togglePin(card.id));
   actions.appendChild(pinButton);
 
@@ -275,9 +321,43 @@ function getCardFace(cardId) {
 function toggleFace(cardId) {
   const nextFace = getCardFace(cardId) === "recto" ? "verso" : "recto";
   state.faceMap.set(cardId, nextFace);
-  renderMainArea();
-  updateInspection();
-  renderSidebar();
+  const image = getCardImageElement(cardId);
+  if (image) {
+    image.classList.add("is-flipping");
+    setTimeout(() => {
+      updateCardFace(cardId);
+      updateInspection();
+      renderSidebar();
+    }, FLIP_ANIMATION_MS / 2);
+    setTimeout(() => {
+      image.classList.remove("is-flipping");
+    }, FLIP_ANIMATION_MS);
+  } else {
+    updateCardFace(cardId);
+    updateInspection();
+    renderSidebar();
+  }
+}
+
+function updateCardFace(cardId) {
+  const card = cardsById.get(cardId);
+  if (!card) {
+    return;
+  }
+  const cardElement = getCardElement(cardId);
+  if (!cardElement) {
+    return;
+  }
+  const face = getCardFace(cardId);
+  const img = getCardImageElement(cardId);
+  if (img) {
+    img.src = buildImageSrc(card, face);
+    img.alt = `${card.title} (${face})`;
+  }
+  const faceLabel = cardElement.querySelector(".card-meta span:last-child");
+  if (faceLabel) {
+    faceLabel.textContent = face === "recto" ? "Recto" : "Verso";
+  }
 }
 
 function togglePin(cardId) {
@@ -309,6 +389,7 @@ function updatePinButtons(cardId) {
     return;
   }
   const isPinned = state.pinned.has(cardId);
+  setPinIcon(pinButton, isPinned);
   pinButton.setAttribute(
     "aria-label",
     isPinned ? "Retirer des épinglées" : "Épingler cette carte"
@@ -351,11 +432,11 @@ function updateInspection() {
   }
 
   const face = getCardFace(card.id);
-  elements.inspectionTitle.textContent = `#${card.id} — ${card.title}`;
+  elements.inspectionTitle.textContent = formatCardTitle(card);
   elements.inspectionImage.src = buildImageSrc(card, face);
   elements.inspectionImage.alt = `${card.title} (${face})`;
   const isPinned = state.pinned.has(card.id);
-  elements.inspectionPinBtn.innerHTML = ICONS.pin;
+  setPinIcon(elements.inspectionPinBtn, isPinned);
   const pinLabel = isPinned
     ? "Retirer des épinglées"
     : "Épingler cette carte";
