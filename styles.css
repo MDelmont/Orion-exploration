@@ -7,6 +7,10 @@
   --color-panel-light: #14162b;
   --color-accent: #9b5bff;
   --color-accent-soft: #c0a4ff33;
+  --color-pin-active: #ffd76a;
+  --color-pin-active-soft: rgba(255, 215, 106, 0.18);
+  --color-focus-ring: #ffffff;
+  --card-shadow: 0 10px 35px rgba(5, 6, 10, 0.55);
   --color-text: #f3f1ff;
   --color-text-muted: #a7abc2;
   --color-border: #252942;
@@ -72,8 +76,9 @@ body {
 }
 
 .nav-button.active {
-  background: var(--color-accent);
-  color: #10041c;
+  background: var(--color-pin-active);
+  color: #1b1200;
+  box-shadow: 0 0 15px rgba(255, 215, 106, 0.35);
 }
 
 .app-shell {
@@ -170,10 +175,11 @@ main {
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
-  box-shadow: 0 10px 35px rgba(5, 6, 10, 0.55);
+  box-shadow: var(--card-shadow);
   height: var(--card-height);
   min-height: var(--card-height);
   overflow: hidden;
+  position: relative;
 }
 
 .card h3 {
@@ -213,24 +219,69 @@ main {
 
 .card-actions button {
   flex: 1;
-  padding: 0.4rem 0.6rem;
-  border-radius: 0.45rem;
-  border: 1px solid var(--color-border);
+  padding: 0.3rem;
+  border: none;
   background: transparent;
   color: var(--color-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background 0.2s ease, border 0.2s ease;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .card-actions button:hover {
-  border-color: var(--color-accent);
-  background: var(--color-accent-soft);
+  color: var(--color-pin-active);
+  transform: translateY(-1px);
+}
+
+.card-actions button[data-action="pin"] {
+  color: var(--color-text);
+}
+
+.card-actions button[data-action="pin"].pin-active,
+.card-actions button[data-action="pin"].pin-active:hover {
+  color: var(--color-pin-active);
+}
+
+.card-actions button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-accent-soft);
+}
+
+.card.active {
+  border-color: rgba(255, 255, 255, 0.65);
+  animation: card-pulse 1.2s ease-out;
+}
+
+.card.active img {
+  border-color: rgba(255, 255, 255, 0.7);
 }
 
 .pin-active {
-  border-color: var(--color-accent);
-  background: rgba(155, 91, 255, 0.2);
+  color: var(--color-pin-active);
+}
+
+.pin-active:hover {
+  color: var(--color-pin-active);
+}
+
+.inspection-actions button.pin-active,
+.inspection-actions button.pin-active:hover {
+  color: var(--color-pin-active);
+}
+
+@keyframes card-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45), var(--card-shadow);
+  }
+  60% {
+    box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.2), var(--card-shadow);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), var(--card-shadow);
+  }
 }
 
 .empty-state {

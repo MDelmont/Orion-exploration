@@ -361,6 +361,7 @@ function updateInspection() {
     : "Épingler cette carte";
   elements.inspectionPinBtn.setAttribute("aria-label", pinLabel);
   elements.inspectionPinBtn.title = pinLabel;
+  elements.inspectionPinBtn.classList.toggle("pin-active", isPinned);
 }
 
 function focusCard(cardId) {
