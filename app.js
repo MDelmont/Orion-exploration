@@ -85,6 +85,39 @@ function getCardImageElement(cardId) {
   return getCardElement(cardId)?.querySelector("img") ?? null;
 }
 
+const preloadedSources = new Set();
+
+function preloadSrc(src) {
+  if (!src || preloadedSources.has(src)) {
+    return;
+  }
+  const img = new Image();
+  img.src = src;
+  preloadedSources.add(src);
+}
+
+function preloadCardImages(card) {
+  preloadSrc(buildImageSrc(card, "recto"));
+  preloadSrc(buildImageSrc(card, "verso"));
+}
+
+function setImageSource(img, src, alt) {
+  if (!img) {
+    return;
+  }
+  if (img.dataset.currentSrc === src) {
+    img.alt = alt;
+    return;
+  }
+  const preloader = new Image();
+  preloader.onload = () => {
+    img.src = src;
+    img.alt = alt;
+    img.dataset.currentSrc = src;
+  };
+  preloader.src = src;
+}
+
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
@@ -288,8 +321,10 @@ function buildCardElement(card) {
   const image = document.createElement("img");
   image.src = buildImageSrc(card, face);
   image.alt = `${card.title} (${face})`;
+  image.dataset.currentSrc = image.src;
   image.addEventListener("click", () => toggleFace(card.id));
   article.appendChild(image);
+  preloadCardImages(card);
 
   const actions = document.createElement("div");
   actions.className = "card-actions";
@@ -364,10 +399,7 @@ function updateCardFace(cardId) {
   }
   const face = getCardFace(cardId);
   const img = getCardImageElement(cardId);
-  if (img) {
-    img.src = buildImageSrc(card, face);
-    img.alt = `${card.title} (${face})`;
-  }
+  setImageSource(img, buildImageSrc(card, face), `${card.title} (${face})`);
   const faceLabel = cardElement.querySelector(".card-meta span:last-child");
   if (faceLabel) {
     faceLabel.textContent = face === "recto" ? "Recto" : "Verso";
