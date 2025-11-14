@@ -558,6 +558,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: none;
 }
 
 #sky-map-image {
@@ -568,6 +569,7 @@ main {
   transform-origin: center;
   cursor: grab;
   transition: transform 0.1s ease;
+  touch-action: none;
 }
 
 #sky-map-image:active {

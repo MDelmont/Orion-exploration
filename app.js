@@ -897,24 +897,115 @@ function setupSkyMap() {
     adjustZoom(delta);
   });
 
-  const startPan = (event) => {
-    event.preventDefault();
+  const beginPan = (clientX, clientY, { skipCursor = false } = {}) => {
     skyState.isPanning = true;
-    skyState.startX = event.clientX - skyState.translateX;
-    skyState.startY = event.clientY - skyState.translateY;
-    image.style.cursor = "grabbing";
+    skyState.startX = clientX - skyState.translateX;
+    skyState.startY = clientY - skyState.translateY;
+    if (!skipCursor) {
+      image.style.cursor = "grabbing";
+    }
   };
 
-  const pan = (event) => {
-    if (!skyState.isPanning) return;
-    skyState.translateX = event.clientX - skyState.startX;
-    skyState.translateY = event.clientY - skyState.startY;
+  const movePan = (clientX, clientY) => {
+    if (!skyState.isPanning) {
+      return;
+    }
+    skyState.translateX = clientX - skyState.startX;
+    skyState.translateY = clientY - skyState.startY;
     updateTransform();
   };
 
-  const endPan = () => {
+  const stopPan = ({ skipCursor = false } = {}) => {
     skyState.isPanning = false;
-    image.style.cursor = "grab";
+    if (!skipCursor) {
+      image.style.cursor = "grab";
+    }
+  };
+
+  const startPan = (event) => {
+    event.preventDefault();
+    beginPan(event.clientX, event.clientY);
+  };
+
+  const pan = (event) => {
+    if (!skyState.isPanning) {
+      return;
+    }
+    movePan(event.clientX, event.clientY);
+  };
+
+  const endPan = () => {
+    stopPan();
+  };
+
+  const touchState = {
+    pinchStartDistance: 0,
+    pinchStartScale: 1,
+  };
+
+  const getTouchDistance = (touchList) => {
+    if (!touchList || touchList.length < 2) {
+      return 0;
+    }
+    const [a, b] = touchList;
+    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  };
+
+  const handleTouchStart = (event) => {
+    if (event.touches.length === 1) {
+      event.preventDefault();
+      touchState.pinchStartDistance = 0;
+      touchState.pinchStartScale = skyState.scale;
+      const touch = event.touches[0];
+      beginPan(touch.clientX, touch.clientY, { skipCursor: true });
+    } else if (event.touches.length === 2) {
+      event.preventDefault();
+      touchState.pinchStartDistance = getTouchDistance(event.touches);
+      touchState.pinchStartScale = skyState.scale;
+      stopPan({ skipCursor: true });
+    }
+  };
+
+  const handleTouchMove = (event) => {
+    if (event.touches.length === 2) {
+      event.preventDefault();
+      const distance = getTouchDistance(event.touches);
+      if (!touchState.pinchStartDistance) {
+        touchState.pinchStartDistance = distance;
+        touchState.pinchStartScale = skyState.scale;
+      }
+      const scaleFactor =
+        touchState.pinchStartDistance === 0
+          ? 1
+          : distance / touchState.pinchStartDistance;
+      skyState.scale = clamp(
+        touchState.pinchStartScale * scaleFactor,
+        skyState.minScale,
+        skyState.maxScale
+      );
+      updateTransform();
+      return;
+    }
+    if (event.touches.length === 1 && skyState.isPanning) {
+      event.preventDefault();
+      const touch = event.touches[0];
+      movePan(touch.clientX, touch.clientY);
+    }
+  };
+
+  const handleTouchEnd = (event) => {
+    if (event.touches.length === 0) {
+      touchState.pinchStartDistance = 0;
+      touchState.pinchStartScale = skyState.scale;
+      stopPan({ skipCursor: true });
+      return;
+    }
+    if (event.touches.length === 1) {
+      touchState.pinchStartDistance = 0;
+      touchState.pinchStartScale = skyState.scale;
+      const touch = event.touches[0];
+      beginPan(touch.clientX, touch.clientY, { skipCursor: true });
+    }
   };
 
   image.addEventListener("mousedown", startPan);
@@ -925,6 +1016,10 @@ function setupSkyMap() {
     event.preventDefault();
     resetView();
   });
+  stage.addEventListener("touchstart", handleTouchStart, { passive: false });
+  stage.addEventListener("touchmove", handleTouchMove, { passive: false });
+  stage.addEventListener("touchend", handleTouchEnd);
+  stage.addEventListener("touchcancel", handleTouchEnd);
 
   zoomIn?.addEventListener("click", () => adjustZoom(0.15));
   zoomOut?.addEventListener("click", () => adjustZoom(-0.15));
