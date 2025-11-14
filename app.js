@@ -64,6 +64,14 @@ function setPinIcon(button, isPinned) {
   button.innerHTML = isPinned ? ICONS.pinFilled : ICONS.pinOutline;
 }
 
+function updateLayoutForCategory() {
+  const isSkyView = state.currentCategory === "carte";
+  document.body.classList.toggle("sky-view", isSkyView);
+  if (!isSkyView && typeof window.__skyExitFullscreen === "function") {
+    window.__skyExitFullscreen();
+  }
+}
+
 function getCardElement(cardId) {
   if (!elements.cardsContainer) {
     return null;
@@ -130,6 +138,9 @@ function bindNavigation() {
     button.addEventListener("click", () => {
       const nextCategory = button.dataset.category;
       if (nextCategory && nextCategory !== state.currentCategory) {
+        if (typeof window.__skyExitFullscreen === "function") {
+          window.__skyExitFullscreen();
+        }
         state.currentCategory = nextCategory;
         state.inspectedCardId = null;
         renderAll();
@@ -161,6 +172,7 @@ function bindInspectionControls() {
 }
 
 function renderAll() {
+  updateLayoutForCategory();
   updateNavigationState();
   renderSidebar();
   renderMainArea();
@@ -178,7 +190,7 @@ function renderSidebar() {
   elements.sidebarList.innerHTML = "";
 
   if (state.currentCategory === "carte") {
-    elements.sidebarSubtitle.textContent = "Vue dédiée à la carte du ciel";
+    elements.sidebarSubtitle.textContent = "Vue dediee a la carte du ciel";
     setHidden(elements.sidebarEmpty, true);
     return;
   }
@@ -193,7 +205,7 @@ function renderSidebar() {
   const label = CATEGORY_LABELS[state.currentCategory] || "Cartes";
   elements.sidebarSubtitle.textContent = `${cards.length} carte${
     cards.length > 1 ? "s" : ""
-  } — ${label.toLowerCase()}`;
+  } � ${label.toLowerCase()}`;
 
   cards.forEach((card) => {
     const item = document.createElement("li");
@@ -201,18 +213,12 @@ function renderSidebar() {
     if (card.category === "encyclopedie") {
       item.textContent = card.title;
     } else {
-      const div = document.createElement("div");      // une div normale
+      const wrapper = document.createElement("div");
       const strong = document.createElement("strong");
-
-      strong.textContent = card.number;               // le nombre en <strong>
-
-      // on met d'abord le <strong> dans la div
-      div.appendChild(strong);
-
-      // puis on ajoute le texte normal derrière
-      div.appendChild(document.createTextNode(` - ${card.title}`));
-
-      item.appendChild(div);
+      strong.textContent = card.number ?? card.id;
+      wrapper.appendChild(strong);
+      wrapper.appendChild(document.createTextNode(` - ${card.title}`));
+      item.appendChild(wrapper);
     }
     const faceLabel = document.createElement("span");
     faceLabel.textContent = getCardFace(card.id) === "recto" ? "Recto" : "Verso";
@@ -222,6 +228,7 @@ function renderSidebar() {
     elements.sidebarList.appendChild(item);
   });
 }
+
 
 function renderMainArea() {
   if (state.currentCategory === "carte") {
@@ -481,6 +488,12 @@ function setupSkyMap() {
   const zoomIn = document.getElementById("zoom-in");
   const zoomOut = document.getElementById("zoom-out");
   const zoomReset = document.getElementById("zoom-reset");
+  const fullscreenToggle = document.getElementById("sky-fullscreen-toggle");
+  const fullscreenExit = document.getElementById("sky-fullscreen-exit");
+
+  if (!stage || !image) {
+    return;
+  }
 
   const skyState = {
     scale: 1,
@@ -491,9 +504,29 @@ function setupSkyMap() {
     startY: 0,
     minScale: 0.6,
     maxScale: 4,
+    isFullscreen: false,
+  };
+
+  const resetView = () => {
+    skyState.scale = 1;
+    skyState.translateX = 0;
+    skyState.translateY = 0;
+    updateTransform();
+  };
+
+  const clampPan = () => {
+    const rect = stage.getBoundingClientRect();
+    const overflowX = Math.max(0, (rect.width * skyState.scale - rect.width) / 2);
+    const overflowY = Math.max(
+      0,
+      (rect.height * skyState.scale - rect.height) / 2
+    );
+    skyState.translateX = clamp(skyState.translateX, -overflowX, overflowX);
+    skyState.translateY = clamp(skyState.translateY, -overflowY, overflowY);
   };
 
   const updateTransform = () => {
+    clampPan();
     image.style.transform = `translate(${skyState.translateX}px, ${skyState.translateY}px) scale(${skyState.scale})`;
   };
 
@@ -536,15 +569,50 @@ function setupSkyMap() {
   window.addEventListener("mousemove", pan);
   window.addEventListener("mouseup", endPan);
   image.addEventListener("mouseleave", endPan);
-
-  zoomIn.addEventListener("click", () => adjustZoom(0.15));
-  zoomOut.addEventListener("click", () => adjustZoom(-0.15));
-  zoomReset.addEventListener("click", () => {
-    skyState.scale = 1;
-    skyState.translateX = 0;
-    skyState.translateY = 0;
-    updateTransform();
+  image.addEventListener("dblclick", (event) => {
+    event.preventDefault();
+    resetView();
   });
+
+  zoomIn?.addEventListener("click", () => adjustZoom(0.15));
+  zoomOut?.addEventListener("click", () => adjustZoom(-0.15));
+  zoomReset?.addEventListener("click", resetView);
+
+  const enterFullscreen = () => {
+    if (skyState.isFullscreen) {
+      return;
+    }
+    skyState.isFullscreen = true;
+    document.body.classList.add("sky-fullscreen");
+    fullscreenExit?.classList.remove("hidden");
+  };
+
+  const exitFullscreen = () => {
+    if (!skyState.isFullscreen) {
+      return;
+    }
+    skyState.isFullscreen = false;
+    document.body.classList.remove("sky-fullscreen");
+    fullscreenExit?.classList.add("hidden");
+  };
+
+  fullscreenToggle?.addEventListener("click", () => {
+    if (skyState.isFullscreen) {
+      exitFullscreen();
+    } else {
+      enterFullscreen();
+    }
+  });
+
+  fullscreenExit?.addEventListener("click", exitFullscreen);
+
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      exitFullscreen();
+    }
+  });
+
+  window.__skyExitFullscreen = exitFullscreen;
 }
 
 function clamp(value, min, max) {

@@ -59,18 +59,7 @@
         >
           <div class="sky-map-controls">
             <h2>Carte du ciel</h2>
-            <div class="buttons">
-              <button id="zoom-out" type="button" aria-label="Zoom arrière">
-                &minus;
-              </button>
-              <button id="zoom-reset" type="button">
-                Centre
-              </button>
-              <button id="zoom-in" type="button" aria-label="Zoom avant">
-                +
-              </button>
-            </div>
-            <p>Molette pour zoomer, cliquer-glisser pour déplacer.</p>
+            <p>Zoom à la molette, cliquer-glisser pour explorer.</p>
           </div>
           <div id="sky-map-stage">
             <img
@@ -80,6 +69,32 @@
               draggable="false"
             />
           </div>
+          <div class="sky-map-floating-controls">
+            <button id="zoom-out" type="button" aria-label="Zoom arrière">
+              &#8722;
+            </button>
+            <button id="zoom-reset" type="button" aria-label="Recentrer">
+              &#10227;
+            </button>
+            <button id="zoom-in" type="button" aria-label="Zoom avant">
+              &#43;
+            </button>
+            <button
+              id="sky-fullscreen-toggle"
+              type="button"
+              aria-label="Plein écran"
+            >
+              &#9633;
+            </button>
+          </div>
+          <button
+            id="sky-fullscreen-exit"
+            class="sky-fullscreen-exit hidden"
+            type="button"
+            aria-label="Quitter le plein écran"
+          >
+            &#10005;
+          </button>
         </section>
       </main>
     </div>
