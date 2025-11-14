@@ -104,31 +104,52 @@
       class="hidden"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="inspection-title"
+      aria-label="Visualisation de carte"
     >
-      <div class="inspection-content">
-        <button
-          id="close-inspection"
-          class="icon-button"
-          type="button"
-          aria-label="Fermer l'inspection"
+      <div class="inspection-shell">
+        <div class="inspection-floating-controls">
+          <button
+            id="inspection-pin"
+            class="icon-button"
+            type="button"
+            aria-label="Epingler cette carte"
+            title="Epingler"
+          ></button>
+          <button
+            id="close-inspection"
+            class="icon-button"
+            type="button"
+            aria-label="Fermer l'inspection"
+            title="Fermer"
+          >
+            &times;
+          </button>
+        </div>
+        <div
+          id="inspection-stage"
+          class="inspection-stage"
+          aria-live="polite"
+          aria-label="Visualisation 3D de la carte"
         >
-          &times;
-        </button>
-        <h2 id="inspection-title"></h2>
-        <img id="inspection-image" alt="" draggable="false" />
+          <div id="inspection-card" class="inspection-card">
+            <div class="inspection-card-face face-front">
+              <img
+                id="inspection-image-front"
+                alt=""
+                draggable="false"
+              />
+            </div>
+            <div class="inspection-card-face face-back">
+              <img id="inspection-image-back" alt="" draggable="false" />
+            </div>
+          </div>
+        </div>
         <div class="inspection-actions">
           <button
             id="inspection-flip"
             type="button"
             aria-label="Retourner la carte"
             title="Retourner"
-          ></button>
-          <button
-            id="inspection-pin"
-            type="button"
-            aria-label="Épingler cette carte"
-            title="Épingler"
           ></button>
         </div>
       </div>

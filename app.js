@@ -49,6 +49,18 @@ const cardsById = new Map(cardsConfig.map((card) => [card.id, card]));
 const FLIP_ANIMATION_MS = 400;
 
 const elements = {};
+const inspectionViewState = {
+  rotationX: -6,
+  rotationY: 0,
+  scale: 1,
+  minScale: 0.65,
+  maxScale: 2.4,
+  pointerPositions: new Map(),
+  pinchDistance: 0,
+  isDragging: false,
+  lastPointerX: 0,
+  lastPointerY: 0,
+};
 
 function formatCardTitle(card) {
   if (card.category === "encyclopedie") {
@@ -127,6 +139,7 @@ function init() {
   elements.inspectionFlipBtn.innerHTML = ICONS.flip;
   bindNavigation();
   bindInspectionControls();
+  setupInspectionViewer();
   setupSkyMap();
   renderAll();
 }
@@ -143,8 +156,10 @@ function cacheElements() {
   elements.cardsEmpty = document.getElementById("cards-empty");
   elements.skySection = document.getElementById("sky-map-section");
   elements.inspectionOverlay = document.getElementById("inspection-overlay");
-  elements.inspectionTitle = document.getElementById("inspection-title");
-  elements.inspectionImage = document.getElementById("inspection-image");
+  elements.inspectionStage = document.getElementById("inspection-stage");
+  elements.inspectionCard = document.getElementById("inspection-card");
+  elements.inspectionImageFront = document.getElementById("inspection-image-front");
+  elements.inspectionImageBack = document.getElementById("inspection-image-back");
   elements.inspectionFlipBtn = document.getElementById("inspection-flip");
   elements.inspectionPinBtn = document.getElementById("inspection-pin");
   elements.closeInspectionBtn = document.getElementById("close-inspection");
@@ -370,21 +385,24 @@ function getCardFace(cardId) {
 function toggleFace(cardId) {
   const nextFace = getCardFace(cardId) === "recto" ? "verso" : "recto";
   state.faceMap.set(cardId, nextFace);
+  const shouldSnapInspection = state.inspectedCardId === cardId;
   const image = getCardImageElement(cardId);
+  const finalizeFaceUpdate = () => {
+    updateCardFace(cardId);
+    updateInspection();
+    if (shouldSnapInspection) {
+      snapInspectionToFace(nextFace);
+    }
+    renderSidebar();
+  };
   if (image) {
     image.classList.add("is-flipping");
-    setTimeout(() => {
-      updateCardFace(cardId);
-      updateInspection();
-      renderSidebar();
-    }, FLIP_ANIMATION_MS / 2);
+    setTimeout(finalizeFaceUpdate, FLIP_ANIMATION_MS / 2);
     setTimeout(() => {
       image.classList.remove("is-flipping");
     }, FLIP_ANIMATION_MS);
   } else {
-    updateCardFace(cardId);
-    updateInspection();
-    renderSidebar();
+    finalizeFaceUpdate();
   }
 }
 
@@ -460,11 +478,13 @@ function openInspection(cardId) {
   state.inspectedCardId = cardId;
   elements.inspectionOverlay.classList.remove("hidden");
   updateInspection();
+  resetInspectionView({ alignToFace: true });
 }
 
 function closeInspection() {
   elements.inspectionOverlay.classList.add("hidden");
   state.inspectedCardId = null;
+  clearInspectionInteractionState();
 }
 
 function updateInspection() {
@@ -477,20 +497,25 @@ function updateInspection() {
     return;
   }
 
-  const face = getCardFace(card.id);
-  elements.inspectionTitle.textContent = formatCardTitle(card);
-  elements.inspectionImage.src = buildImageSrc(card, face);
-  elements.inspectionImage.alt = `${card.title} (${face})`;
+  setImageSource(
+    elements.inspectionImageFront,
+    buildImageSrc(card, "recto"),
+    `${card.title} (recto)`
+  );
+  setImageSource(
+    elements.inspectionImageBack,
+    buildImageSrc(card, "verso"),
+    `${card.title} (verso)`
+  );
   const isPinned = state.pinned.has(card.id);
   setPinIcon(elements.inspectionPinBtn, isPinned);
   const pinLabel = isPinned
-    ? "Retirer des épinglées"
-    : "Épingler cette carte";
+    ? "Retirer des epingles"
+    : "Epingler cette carte";
   elements.inspectionPinBtn.setAttribute("aria-label", pinLabel);
   elements.inspectionPinBtn.title = pinLabel;
   elements.inspectionPinBtn.classList.toggle("pin-active", isPinned);
 }
-
 function focusCard(cardId) {
   if (state.currentCategory === "carte") {
     return;
@@ -512,6 +537,166 @@ function setHidden(element, hidden) {
     return;
   }
   element.classList.toggle("hidden", hidden);
+}
+
+function setupInspectionViewer() {
+  const stage = elements.inspectionStage;
+  const card = elements.inspectionCard;
+  if (!stage || !card) {
+    return;
+  }
+
+  const handlePointerDown = (event) => {
+    event.preventDefault();
+    stage.setPointerCapture?.(event.pointerId);
+    inspectionViewState.pointerPositions.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY,
+    });
+    if (inspectionViewState.pointerPositions.size === 1) {
+      inspectionViewState.isDragging = true;
+      inspectionViewState.lastPointerX = event.clientX;
+      inspectionViewState.lastPointerY = event.clientY;
+    } else if (inspectionViewState.pointerPositions.size === 2) {
+      inspectionViewState.isDragging = false;
+      inspectionViewState.pinchDistance = getInspectionPointerDistance();
+    }
+  };
+
+  const handlePointerMove = (event) => {
+    if (!inspectionViewState.pointerPositions.has(event.pointerId)) {
+      return;
+    }
+    inspectionViewState.pointerPositions.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY,
+    });
+
+    if (
+      inspectionViewState.pointerPositions.size === 1 &&
+      inspectionViewState.isDragging
+    ) {
+      const dx = event.clientX - inspectionViewState.lastPointerX;
+      const dy = event.clientY - inspectionViewState.lastPointerY;
+      inspectionViewState.rotationY += dx * 0.25;
+      inspectionViewState.rotationX = clamp(
+        inspectionViewState.rotationX - dy * 0.25,
+        -80,
+        80
+      );
+      inspectionViewState.lastPointerX = event.clientX;
+      inspectionViewState.lastPointerY = event.clientY;
+      applyInspectionTransform();
+      return;
+    }
+
+    if (inspectionViewState.pointerPositions.size >= 2) {
+      const distance = getInspectionPointerDistance();
+      if (inspectionViewState.pinchDistance > 0 && distance > 0) {
+        const ratio = distance / inspectionViewState.pinchDistance;
+        setInspectionScale(inspectionViewState.scale * ratio);
+      }
+      inspectionViewState.pinchDistance = distance;
+    }
+  };
+
+  const handlePointerUp = (event) => {
+    stage.releasePointerCapture?.(event.pointerId);
+    inspectionViewState.pointerPositions.delete(event.pointerId);
+    if (!inspectionViewState.pointerPositions.size) {
+      inspectionViewState.isDragging = false;
+      inspectionViewState.pinchDistance = 0;
+      return;
+    }
+    if (inspectionViewState.pointerPositions.size === 1) {
+      const [remaining] = inspectionViewState.pointerPositions.values();
+      inspectionViewState.lastPointerX = remaining.x;
+      inspectionViewState.lastPointerY = remaining.y;
+      inspectionViewState.isDragging = true;
+    }
+  };
+
+  const handleWheel = (event) => {
+    event.preventDefault();
+    const delta = event.deltaY < 0 ? 0.1 : -0.1;
+    setInspectionScale(inspectionViewState.scale + delta);
+  };
+
+  stage.addEventListener("pointerdown", handlePointerDown);
+  stage.addEventListener("pointermove", handlePointerMove);
+  stage.addEventListener("pointerup", handlePointerUp);
+  stage.addEventListener("pointercancel", handlePointerUp);
+  try {
+    stage.addEventListener("wheel", handleWheel, { passive: false });
+  } catch (error) {
+    stage.addEventListener("wheel", handleWheel);
+  }
+  stage.addEventListener("dblclick", (event) => {
+    event.preventDefault();
+    resetInspectionView({ alignToFace: true });
+  });
+
+  card.addEventListener("dblclick", (event) => {
+    event.stopPropagation();
+    if (state.inspectedCardId !== null) {
+      toggleFace(state.inspectedCardId);
+    }
+  });
+
+  applyInspectionTransform();
+}
+
+function resetInspectionView({ alignToFace = false } = {}) {
+  inspectionViewState.rotationX = -6;
+  if (alignToFace && state.inspectedCardId !== null) {
+    const face = getCardFace(state.inspectedCardId);
+    inspectionViewState.rotationY = face === "recto" ? 0 : 180;
+  } else {
+    inspectionViewState.rotationY = 0;
+  }
+  inspectionViewState.scale = 1;
+  clearInspectionInteractionState();
+  applyInspectionTransform();
+}
+
+function snapInspectionToFace(face) {
+  inspectionViewState.rotationX = -6;
+  inspectionViewState.rotationY = face === "recto" ? 0 : 180;
+  applyInspectionTransform();
+}
+
+function setInspectionScale(nextScale) {
+  inspectionViewState.scale = clamp(
+    nextScale,
+    inspectionViewState.minScale,
+    inspectionViewState.maxScale
+  );
+  applyInspectionTransform();
+}
+
+function applyInspectionTransform() {
+  if (!elements.inspectionCard) {
+    return;
+  }
+  const { rotationX, rotationY, scale } = inspectionViewState;
+  elements.inspectionCard.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(${scale})`;
+}
+
+function getInspectionPointerDistance() {
+  const positions = Array.from(inspectionViewState.pointerPositions.values());
+  if (positions.length < 2) {
+    return 0;
+  }
+  const [a, b] = positions;
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function clearInspectionInteractionState() {
+  inspectionViewState.pointerPositions.clear();
+  inspectionViewState.pinchDistance = 0;
+  inspectionViewState.isDragging = false;
+  inspectionViewState.lastPointerX = 0;
+  inspectionViewState.lastPointerY = 0;
 }
 
 function setupSkyMap() {
