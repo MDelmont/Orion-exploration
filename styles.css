@@ -34,6 +34,28 @@ textarea {
   color: var(--color-text);
 }
 
+button {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+}
+
+img {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+}
+
+.nav-button {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+}
+
 html {
   background: #01010a;
 }
@@ -264,6 +286,17 @@ body::after {
   flex-direction: column;
   gap: 0.3rem;
   max-height: calc(100vh - 8rem);
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+}
+
+#cards-list * {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
 }
 
 #cards-list li {
@@ -277,6 +310,7 @@ body::after {
   align-items: center;
   gap: 0.4rem;
   background: transparent;
+  user-select: none;
 }
 
 #cards-list li span {
@@ -312,6 +346,11 @@ main {
   padding: 0.6rem;
   justify-content: center;
   align-content: flex-start;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  caret-color: transparent;
 }
 
 .card {
@@ -326,6 +365,19 @@ main {
   width: fit-content;
   max-width: 100%;
   text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  caret-color: transparent;
+}
+
+.card * {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  caret-color: transparent;
 }
 
 .card h3 {

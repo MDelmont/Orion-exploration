@@ -138,6 +138,15 @@ function setImageSource(img, src, alt) {
   preloader.src = src;
 }
 
+function disableSelection(element) {
+  if (!element) {
+    return;
+  }
+  element.addEventListener("selectstart", (event) => {
+    event.preventDefault();
+  });
+}
+
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
@@ -191,6 +200,7 @@ function applyDisplaySettings() {
 
 function bindNavigation() {
   elements.navButtons.forEach((button) => {
+    disableSelection(button);
     button.addEventListener("click", () => {
       const nextCategory = button.dataset.category;
       if (nextCategory && nextCategory !== state.currentCategory) {
@@ -281,6 +291,7 @@ function renderSidebar() {
     item.append(" ");
     item.appendChild(faceLabel);
     item.addEventListener("click", () => focusCard(card.id));
+    disableSelection(item);
     elements.sidebarList.appendChild(item);
   });
 }
@@ -329,6 +340,7 @@ function buildCardElement(card) {
   const article = document.createElement("article");
   article.className = "card";
   article.dataset.cardId = card.id;
+  disableSelection(article);
 
   const title = document.createElement("h3");
   title.textContent = formatCardTitle(card);
