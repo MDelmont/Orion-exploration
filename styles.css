@@ -16,6 +16,8 @@
   --color-border: rgba(255, 215, 106, 0.2);
   --card-image-height: auto;
   --header-height: 150px;
+  --inspection-aspect: 63 / 88;
+  --inspection-stage-height: min(80vh, 520px);
 }
 
 *,
@@ -404,9 +406,7 @@ main {
   color: var(--color-pin-active);
 }
 
-#inspection-pin {
-  color: rgba(255, 215, 106, 0.55);
-}
+
 
 #inspection-pin.pin-active {
   color: var(--color-pin-active);
@@ -631,7 +631,7 @@ body.sky-fullscreen {
 .inspection-stage {
   width: min(70vw, 420px);
   max-width: 90vw;
-  aspect-ratio: 63 / 88;
+  aspect-ratio: var(--inspection-aspect, 63 / 88);
   max-height: 85vh;
   display: flex;
   align-items: center;
@@ -639,6 +639,11 @@ body.sky-fullscreen {
   perspective: 1600px;
   cursor: grab;
   touch-action: none;
+}
+
+.inspection-stage.is-dynamic {
+  width: auto;
+  height: var(--inspection-stage-height);
 }
 
 .inspection-stage:active {
@@ -698,6 +703,10 @@ body.sky-fullscreen {
   pointer-events: none;
 }
 
+.inspection-stage.is-dynamic .inspection-card-face img {
+  object-fit: contain;
+}
+
 .inspection-actions {
   margin-top: 1rem;
   display: flex;
@@ -728,6 +737,10 @@ body.sky-fullscreen {
 }
 
 @media (max-width: 600px) {
+  :root {
+    --inspection-stage-height: min(70vh, 360px);
+  }
+
   .inspection-floating-controls {
     top: 1rem;
     right: 1rem;
@@ -736,6 +749,7 @@ body.sky-fullscreen {
   .inspection-stage {
     width: min(82vw, 360px);
   }
+
 }
 
 @media (max-width: 900px) {

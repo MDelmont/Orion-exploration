@@ -38,6 +38,14 @@ const CATEGORY_FOLDERS = {
   encyclopedie: "images/cartes/encyclopedies/",
 };
 
+const CATEGORY_ASPECT_DIMENSIONS = {
+  histoire: { width: 298, height: 420 },
+  encyclopedie: { width: 298, height: 420 },
+  enigme: { width: 199, height: 341 },
+};
+
+const DEFAULT_ASPECT_DIMENSIONS = { width: 63, height: 88 };
+
 const state = {
   currentCategory: "histoire",
   pinned: new Set(),
@@ -253,7 +261,7 @@ function renderSidebar() {
   const label = CATEGORY_LABELS[state.currentCategory] || "Cartes";
   elements.sidebarSubtitle.textContent = `${cards.length} carte${
     cards.length > 1 ? "s" : ""
-  } � ${label.toLowerCase()}`;
+  } - ${label.toLowerCase()}`;
 
   cards.forEach((card) => {
     const item = document.createElement("li");
@@ -476,6 +484,8 @@ function openInspection(cardId) {
     return;
   }
   state.inspectedCardId = cardId;
+  resetInspectionAspectRatio();
+  primeInspectionStage(card);
   elements.inspectionOverlay.classList.remove("hidden");
   updateInspection();
   resetInspectionView({ alignToFace: true });
@@ -484,6 +494,7 @@ function openInspection(cardId) {
 function closeInspection() {
   elements.inspectionOverlay.classList.add("hidden");
   state.inspectedCardId = null;
+  resetInspectionAspectRatio();
   clearInspectionInteractionState();
 }
 
@@ -497,6 +508,7 @@ function updateInspection() {
     return;
   }
 
+  updateInspectionStageMode(card);
   setImageSource(
     elements.inspectionImageFront,
     buildImageSrc(card, "recto"),
@@ -515,6 +527,117 @@ function updateInspection() {
   elements.inspectionPinBtn.setAttribute("aria-label", pinLabel);
   elements.inspectionPinBtn.title = pinLabel;
   elements.inspectionPinBtn.classList.toggle("pin-active", isPinned);
+  syncInspectionAspectRatio(card);
+}
+
+function resetInspectionAspectRatio() {
+  if (elements.inspectionStage) {
+    elements.inspectionStage.style.removeProperty("--inspection-aspect");
+    elements.inspectionStage.classList.remove("is-dynamic");
+  }
+}
+
+function syncInspectionAspectRatio(card) {
+  const stage = elements.inspectionStage;
+  if (!stage) {
+    return;
+  }
+  const front = elements.inspectionImageFront;
+  const back = elements.inspectionImageBack;
+  const targetFrontSrc = buildImageSrc(card, "recto");
+  const targetBackSrc = buildImageSrc(card, "verso");
+
+  const applyAspectRatio = (width, height) => {
+    if (
+      !Number.isFinite(width) ||
+      !Number.isFinite(height) ||
+      width <= 0 ||
+      height <= 0
+    ) {
+      return false;
+    }
+    stage.style.setProperty("--inspection-aspect", `${width} / ${height}`);
+    return true;
+  };
+
+  const tryFromImage = (img, expectedSrc) => {
+    if (
+      !img ||
+      img.dataset.currentSrc !== expectedSrc ||
+      !img.complete ||
+      !img.naturalWidth ||
+      !img.naturalHeight
+    ) {
+      return false;
+    }
+    return applyAspectRatio(img.naturalWidth, img.naturalHeight);
+  };
+
+  if (
+    tryFromImage(front, targetFrontSrc) ||
+    tryFromImage(back, targetBackSrc)
+  ) {
+    return;
+  }
+
+  const fallbackDimensions =
+    (card && CATEGORY_ASPECT_DIMENSIONS[card.category]) ||
+    DEFAULT_ASPECT_DIMENSIONS;
+  applyAspectRatio(fallbackDimensions.width, fallbackDimensions.height);
+
+  let detached = false;
+  const cleanup = () => {
+    if (detached) {
+      return;
+    }
+    detached = true;
+    front?.removeEventListener("load", handleLoad);
+    back?.removeEventListener("load", handleLoad);
+    front?.removeEventListener("error", handleError);
+    back?.removeEventListener("error", handleError);
+  };
+
+  const handleLoad = (event) => {
+    if (
+      tryFromImage(event.currentTarget, targetFrontSrc) ||
+      tryFromImage(event.currentTarget, targetBackSrc)
+    ) {
+      cleanup();
+    }
+  };
+
+  const handleError = () => {
+    cleanup();
+  };
+
+  front?.addEventListener("load", handleLoad);
+  front?.addEventListener("error", handleError);
+  back?.addEventListener("load", handleLoad);
+  back?.addEventListener("error", handleError);
+}
+
+function updateInspectionStageMode(card) {
+  const stage = elements.inspectionStage;
+  if (!stage) {
+    return;
+  }
+  const useDynamicSizing = card?.category === "enigme";
+  stage.classList.toggle("is-dynamic", useDynamicSizing);
+}
+
+function primeInspectionStage(card) {
+  const stage = elements.inspectionStage;
+  if (!stage) {
+    return;
+  }
+  const fallbackDimensions =
+    (card && CATEGORY_ASPECT_DIMENSIONS[card.category]) ||
+    DEFAULT_ASPECT_DIMENSIONS;
+  stage.classList.toggle("is-dynamic", card?.category === "enigme");
+  stage.style.setProperty(
+    "--inspection-aspect",
+    `${fallbackDimensions.width} / ${fallbackDimensions.height}`
+  );
 }
 function focusCard(cardId) {
   if (state.currentCategory === "carte") {
