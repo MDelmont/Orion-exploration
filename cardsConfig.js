@@ -470,7 +470,7 @@ const cardsConfig = [
 ];
 
 export const cardDisplaySettings = {
-  "cardHeight": 500
+  "cardHeight": 450
 };
 
 export default cardsConfig;

@@ -70,6 +70,165 @@ const inspectionViewState = {
   lastPointerY: 0,
 };
 
+const SPACE_BASE_PATH = "images/backgound";
+const SPACE_GROUPS = {
+  vaiseau: {
+    motion: "thrust",
+    scale: [0.32, 0.6],
+    speed: [18, 30],
+    files: [
+      "vaiseau-1.svg",
+      "vaiseau-2.svg",
+      "vaiseau-3.svg",
+      "vaiseau-4.svg",
+      "vaiseau-5.svg",
+      "vaiseau-6.svg",
+      "vaiseau-7.svg",
+      "vaiseau-8.svg",
+      "vaiseau-9.svg",
+      "vaiseau-10.svg",
+      "vaiseau-11.svg",
+      "vaiseau-12.svg",
+    ],
+  },
+  "astoroide-fire": {
+    motion: "thrust",
+    scale: [0.28, 0.6],
+    speed: [18, 30],
+    files: [
+      "astreroideFire-1.svg",
+      "astreroideFire-2.svg",
+      "astreroideFire-3.svg",
+      "astreroideFire-4.svg",
+      "astreroideFire-5.svg",
+      "astreroideFire-6.svg",
+      "astreroideFire-7.svg",
+    ],
+  },
+  astronote: {
+    motion: "float",
+    scale: [0.35, 0.65],
+    speed: [26, 44],
+    files: [
+      "astronote-1.svg",
+      "astronote-2.svg",
+      "astronote-3.svg",
+      "astronote-4.svg",
+      "astronote-5.svg",
+      "astronote-6.svg",
+      "astronote-7.svg",
+      "astronote-8.svg",
+      "astronote-9.svg",
+      "astronote-10.svg",
+      "astronote-11.svg",
+      "astronote-12.svg",
+      "astronote-13.svg",
+      "astronote-14.svg",
+      "astronote-15.svg",
+      "astronote-16.svg",
+      "astronote-17.svg",
+      "astronote-18.svg",
+      "astronote-19.svg",
+      "astronote-20.svg",
+    ],
+  },
+  satelitte: {
+    motion: "side",
+    scale: [0.32, 0.55],
+    speed: [24, 40],
+    baseRotation: -90,
+    files: [
+      "Satellite-1.svg",
+      "Satellite-2.svg",
+      "Satellite-3.svg",
+      "Satellite-4.svg",
+      "Satellite-5.svg",
+      "Satellite-6.svg",
+      "Satellite-7.svg",
+    ],
+  },
+  asteroide: {
+    motion: "drift",
+    scale: [0.32, 0.55],
+    speed: [26, 46],
+    files: [
+      "astreroide-1.svg",
+      "astreroide-2.svg",
+      "astreroide-3.svg",
+      "astreroide-4.svg",
+      "astreroide-5.svg",
+    ],
+  },
+  planete: {
+    motion: "drift",
+    scale: [0.38, 0.65],
+    speed: [30, 52],
+    files: [
+      "Planete-1.svg",
+      "Planete-2.svg",
+      "Planete-3.svg",
+      "Planete-4.svg",
+      "Planete-5.svg",
+      "Planete-6.svg",
+      "Planete-7.svg",
+      "Planete-8.svg",
+    ],
+  },
+  "trou-noir": {
+    motion: "drift",
+    scale: [0.32, 0.55],
+    speed: [32, 56],
+    files: [
+      "TrouNoir-1.svg",
+      "TrouNoir-2.svg",
+      "TrouNoir-3.svg",
+      "TrouNoir-4.svg",
+      "TrouNoir-5.svg",
+      "TrouNoir-6.svg",
+      "TrouNoir-7.svg",
+      "TrouNoir-8.svg",
+    ],
+  },
+};
+
+const MAIN_SPRITE_COUNT = 35;
+const OVERLAY_SPRITE_COUNT = 35;
+
+function randomSpaceDefinition() {
+  const entries = Object.entries(SPACE_GROUPS);
+  const [folder, config] = entries[Math.floor(Math.random() * entries.length)];
+  const file = config.files[Math.floor(Math.random() * config.files.length)];
+  return {
+    src: `${SPACE_BASE_PATH}/${folder}/${file}`,
+    motion: config.motion,
+    scale: config.scale,
+    baseRotation: config.baseRotation,
+    speed: config.speed,
+    folder,
+  };
+}
+
+function resolveSpaceDefinition(definition) {
+  const base = definition || randomSpaceDefinition();
+  let folder = base.folder;
+  if (!folder && typeof base.src === "string") {
+    const match = base.src.match(/backgound\/([^/]+)\//i);
+    folder = match ? match[1] : undefined;
+  }
+  const group = folder ? SPACE_GROUPS[folder] : null;
+  return {
+    src: base.src,
+    folder,
+    motion: base.motion || group?.motion || "drift",
+    scale: base.scale || group?.scale || [0.35, 0.6],
+    speed: base.speed || group?.speed || [22, 38],
+    baseRotation:
+      base.baseRotation !== undefined
+        ? base.baseRotation
+        : group?.baseRotation,
+  };
+}
+
 function formatCardTitle(card) {
   if (card.category === "encyclopedie") {
     return card.title;
@@ -158,6 +317,7 @@ function init() {
   bindInspectionControls();
   setupInspectionViewer();
   setupSkyMap();
+  setupSpaceBackground();
   renderAll();
 }
 
@@ -1084,4 +1244,164 @@ function setupSkyMap() {
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
+}
+
+function setupSpaceBackground() {
+  const mainLayer = createSpaceLayer("space-sprites-layer");
+  document.body.appendChild(mainLayer);
+  seedSpaceSprites(mainLayer, MAIN_SPRITE_COUNT);
+
+  // On reuse le fond principal pour la vue 3D : pas de calque suppl�mentaire dans l'overlay.
+}
+
+function createSpaceLayer(id) {
+  const layer = document.createElement("div");
+  layer.id = id;
+  layer.className = "space-sprites-layer";
+  layer.setAttribute("aria-hidden", "true");
+  return layer;
+}
+
+function seedSpaceSprites(layer, count) {
+  for (let i = 0; i < count; i += 1) {
+    const def = resolveSpaceDefinition(randomSpaceDefinition());
+    const sprite = buildSpaceSprite(def);
+    layer.appendChild(sprite);
+    const initialDelay = Math.random() * 3000;
+    setTimeout(() => animateSpaceSprite(sprite, def), initialDelay);
+  }
+}
+
+function buildSpaceSprite(definition) {
+  const def = resolveSpaceDefinition(definition);
+  const sprite = document.createElement("img");
+  sprite.src = def.src;
+  sprite.className = "space-sprite";
+  sprite.loading = "lazy";
+  sprite.decoding = "async";
+  sprite.dataset.motion = def.motion;
+  sprite.dataset.tint = Math.random() > 0.45 ? "gold" : "white";
+  sprite.dataset.folder = def.folder || "";
+  return sprite;
+}
+
+function animateSpaceSprite(sprite, definition) {
+  const def = resolveSpaceDefinition(definition);
+
+  const margin = 160;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const randomBetween = (min, max) => Math.random() * (max - min) + min;
+  const scaleRange = def.scale || [0.35, 0.6];
+  const scale = randomBetween(scaleRange[0], scaleRange[1]);
+  const driftRotation = randomBetween(-14, 14);
+
+  const pickRoute = (motion) => {
+    const routes = [];
+    const top = () => ({
+      start: { x: randomBetween(-margin, viewportWidth + margin), y: -margin },
+      end: {
+        x: randomBetween(-margin, viewportWidth + margin),
+        y: viewportHeight + margin,
+      },
+    });
+    const bottom = () => ({
+      start: { x: randomBetween(-margin, viewportWidth + margin), y: viewportHeight + margin },
+      end: { x: randomBetween(-margin, viewportWidth + margin), y: -margin },
+    });
+    const left = () => ({
+      start: { x: -margin, y: randomBetween(-margin, viewportHeight + margin) },
+      end: { x: viewportWidth + margin, y: randomBetween(-margin, viewportHeight + margin) },
+    });
+    const right = () => ({
+      start: { x: viewportWidth + margin, y: randomBetween(-margin, viewportHeight + margin) },
+      end: { x: -margin, y: randomBetween(-margin, viewportHeight + margin) },
+    });
+
+    if (motion === "side") {
+      routes.push(left(), right());
+    } else if (motion === "float") {
+      routes.push(left(), right(), top(), bottom());
+    } else if (motion === "thrust") {
+      routes.push(
+        // bas -> haut
+        () => {
+          const startX = randomBetween(-margin, viewportWidth + margin);
+          return {
+            start: { x: startX, y: viewportHeight + margin },
+            end: { x: startX + randomBetween(-220, 220), y: -margin },
+          };
+        },
+        // haut -> bas
+        () => {
+          const startX = randomBetween(-margin, viewportWidth + margin);
+          return {
+            start: { x: startX, y: -margin },
+            end: { x: startX + randomBetween(-220, 220), y: viewportHeight + margin },
+          };
+        },
+        // gauche -> droite
+        () => {
+          const startY = randomBetween(-margin, viewportHeight + margin);
+          return {
+            start: { x: -margin, y: startY },
+            end: { x: viewportWidth + margin, y: startY + randomBetween(-180, 180) },
+          };
+        },
+        // droite -> gauche
+        () => {
+          const startY = randomBetween(-margin, viewportHeight + margin);
+          return {
+            start: { x: viewportWidth + margin, y: startY },
+            end: { x: -margin, y: startY + randomBetween(-180, 180) },
+          };
+        }
+      );
+      return routes[Math.floor(Math.random() * routes.length)]();
+    } else {
+      routes.push(bottom(), top());
+    }
+    return routes[Math.floor(Math.random() * routes.length)];
+  };
+
+  const route = pickRoute(def.motion);
+  const start = route.start;
+  const end = route.end;
+  const angleDeg =
+    (Math.atan2(end.y - start.y, end.x - start.x) * 180) / Math.PI;
+  const isThrust =
+    def.motion === "thrust" ||
+    def.folder === "vaiseau" ||
+    def.folder === "astoroide-fire";
+  const headingRotation = isThrust
+    ? angleDeg + 90 + (def.baseRotation || 0)
+    : 0;
+  const duration = randomBetween(22, 38);
+  const durationRange = def.speed || [22, 38];
+  const clampedDuration = randomBetween(durationRange[0], durationRange[1]);
+
+  sprite.style.transition = "none";
+  sprite.dataset.motion = def.motion;
+  sprite.dataset.folder = def.folder || "";
+  sprite.style.transform = `translate(${start.x}px, ${start.y}px) scale(${scale}) rotate(${headingRotation}deg)`;
+  sprite.src = def.src;
+  // Force initial orientation without animating rotation
+  sprite.getBoundingClientRect();
+
+  requestAnimationFrame(() => {
+    sprite.style.transition = `transform ${clampedDuration}s linear`;
+    sprite.style.transform = `translate(${end.x}px, ${end.y}px) scale(${scale}) rotate(${headingRotation}deg)`;
+  });
+
+  if (sprite._onTransitionEnd) {
+    sprite.removeEventListener("transitionend", sprite._onTransitionEnd);
+  }
+  sprite._onTransitionEnd = () => {
+    sprite.removeEventListener("transitionend", sprite._onTransitionEnd);
+    sprite._onTransitionEnd = null;
+    animateSpaceSprite(sprite, randomSpaceDefinition());
+  };
+  sprite.addEventListener("transitionend", sprite._onTransitionEnd, {
+    once: true,
+  });
 }
