@@ -317,6 +317,7 @@ function init() {
   bindInspectionControls();
   setupInspectionViewer();
   setupSkyMap();
+  setupCardsBackToTop();
   setupSpaceBackground();
   renderAll();
 }
@@ -332,6 +333,8 @@ function cacheElements() {
   elements.cardsContainer = document.getElementById("cards-container");
   elements.cardsEmpty = document.getElementById("cards-empty");
   elements.skySection = document.getElementById("sky-map-section");
+  elements.skyBackToTop = document.getElementById("sky-back-to-top");
+  elements.cardsBackToTop = document.getElementById("cards-back-to-top");
   elements.inspectionOverlay = document.getElementById("inspection-overlay");
   elements.inspectionStage = document.getElementById("inspection-stage");
   elements.inspectionCard = document.getElementById("inspection-card");
@@ -1244,6 +1247,27 @@ function setupSkyMap() {
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
+}
+
+function setupCardsBackToTop() {
+  const btn = elements.cardsBackToTop;
+  if (!btn) {
+    return;
+  }
+
+  const updateVisibility = () => {
+    const inSkyView = document.body.classList.contains("sky-view");
+    const shouldShow = !inSkyView && window.scrollY > 180;
+    btn.classList.toggle("hidden", !shouldShow);
+  };
+
+  btn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  window.addEventListener("scroll", updateVisibility, { passive: true });
+  window.addEventListener("resize", updateVisibility);
+  updateVisibility();
 }
 
 function setupSpaceBackground() {
