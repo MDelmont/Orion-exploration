@@ -116,6 +116,10 @@ body {
   isolation: isolate;
 }
 
+body.inspection-open {
+  overflow: hidden;
+}
+
 body::before,
 body::after {
   content: "";
@@ -640,7 +644,7 @@ body.sky-fullscreen {
 #inspection-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(1, 2, 10, 0.8);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -648,6 +652,75 @@ body.sky-fullscreen {
   z-index: 1000;
   backdrop-filter: blur(18px);
   overflow: hidden;
+  isolation: isolate;
+}
+
+#inspection-overlay::before,
+#inspection-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#inspection-overlay::before {
+  background: linear-gradient(180deg, #01010a 0%, #050518 60%, #01010a 100%);
+  opacity: 0.92;
+}
+
+#inspection-overlay::after {
+  background-image: radial-gradient(
+      1px 1px at 15px 25px,
+      rgba(255, 255, 255, 0.9),
+      transparent
+    ),
+    radial-gradient(
+      1px 1px at 60px 90px,
+      rgba(255, 215, 106, 0.85),
+      transparent
+    ),
+    radial-gradient(
+      1px 1px at 110px 160px,
+      rgba(140, 190, 255, 0.85),
+      transparent
+    ),
+    radial-gradient(
+      2px 2px at 180px 40px,
+      rgba(255, 255, 255, 0.75),
+      transparent
+    ),
+    radial-gradient(
+      2px 2px at 240px 210px,
+      rgba(255, 215, 106, 0.8),
+      transparent
+    ),
+    radial-gradient(
+      1px 1px at 320px 130px,
+      rgba(255, 255, 255, 0.95),
+      transparent
+    ),
+    radial-gradient(
+      1px 1px at 400px 260px,
+      rgba(150, 210, 255, 0.85),
+      transparent
+    ),
+    radial-gradient(
+      2.5px 2.5px at 80px 320px,
+      rgba(255, 255, 255, 0.9),
+      transparent
+    ),
+    radial-gradient(
+      3px 3px at 280px 360px,
+      rgba(255, 215, 150, 0.9),
+      transparent
+    );
+  background-size: 140px 140px, 200px 200px, 260px 260px, 320px 320px,
+    420px 420px, 520px 520px, 640px 640px, 720px 720px, 900px 900px;
+  opacity: 1;
+  filter: brightness(1.2) saturate(1.25);
+  animation: driftStars 120s linear infinite, twinkle 4.8s ease-in-out infinite;
+  mix-blend-mode: screen;
 }
 
 .inspection-shell {
@@ -655,6 +728,7 @@ body.sky-fullscreen {
   width: 100%;
   height: 100%;
   max-width: 1200px;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;

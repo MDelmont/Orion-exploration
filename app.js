@@ -498,6 +498,7 @@ function openInspection(cardId) {
   state.inspectedCardId = cardId;
   resetInspectionAspectRatio();
   primeInspectionStage(card);
+  document.body.classList.add("inspection-open");
   elements.inspectionOverlay.classList.remove("hidden");
   updateInspection();
   resetInspectionView({ alignToFace: true });
@@ -508,6 +509,7 @@ function closeInspection() {
   state.inspectedCardId = null;
   resetInspectionAspectRatio();
   clearInspectionInteractionState();
+  document.body.classList.remove("inspection-open");
 }
 
 function updateInspection() {
@@ -677,9 +679,19 @@ function setHidden(element, hidden) {
 function setupInspectionViewer() {
   const stage = elements.inspectionStage;
   const card = elements.inspectionCard;
+  const overlay = elements.inspectionOverlay;
   if (!stage || !card) {
     return;
   }
+  const handleOverlayWheel = (event) => {
+    if (state.inspectedCardId === null) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    const delta = event.deltaY < 0 ? 0.1 : -0.1;
+    setInspectionScale(inspectionViewState.scale + delta);
+  };
 
   const handlePointerDown = (event) => {
     event.preventDefault();
@@ -765,6 +777,14 @@ function setupInspectionViewer() {
     stage.addEventListener("wheel", handleWheel, { passive: false });
   } catch (error) {
     stage.addEventListener("wheel", handleWheel);
+  }
+  try {
+    overlay?.addEventListener("wheel", handleOverlayWheel, {
+      passive: false,
+      capture: true,
+    });
+  } catch (error) {
+    overlay?.addEventListener("wheel", handleOverlayWheel, true);
   }
   stage.addEventListener("dblclick", (event) => {
     event.preventDefault();
