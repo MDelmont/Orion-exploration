@@ -391,9 +391,9 @@ const cardsConfig = [
     "category": "histoire",
     "title": "La Le Dessin Interieur",
     "typeCode": "H",
-    "rectoFile": "H_R_La-Le-Dessin-Interieur_677.svg",
-    "versoFile": "H_V_La-Le-Dessin-Interieur_677.svg",
-    "number": 677
+    "rectoFile": "H_R_La-Le-Dessin-Interieur_706.svg",
+    "versoFile": "H_V_La-Le-Dessin-Interieur_706.svg",
+    "number": 706
   },
   {
     "id": 45,

@@ -663,6 +663,7 @@ function openInspection(cardId) {
   primeInspectionStage(card);
   document.body.classList.add("inspection-open");
   elements.inspectionOverlay.classList.remove("hidden");
+  updateCardsBackToTopVisibility();
   updateInspection();
   resetInspectionView({ alignToFace: true });
 }
@@ -673,6 +674,7 @@ function closeInspection() {
   resetInspectionAspectRatio();
   clearInspectionInteractionState();
   document.body.classList.remove("inspection-open");
+  updateCardsBackToTopVisibility();
 }
 
 function updateInspection() {
@@ -1249,25 +1251,31 @@ function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
 
+function updateCardsBackToTopVisibility() {
+  const btn = elements.cardsBackToTop;
+  if (!btn) {
+    return;
+  }
+
+  const inSkyView = document.body.classList.contains("sky-view");
+  const inInspectionMode = document.body.classList.contains("inspection-open");
+  const shouldShow = !inSkyView && !inInspectionMode && window.scrollY > 180;
+  btn.classList.toggle("hidden", !shouldShow);
+}
+
 function setupCardsBackToTop() {
   const btn = elements.cardsBackToTop;
   if (!btn) {
     return;
   }
 
-  const updateVisibility = () => {
-    const inSkyView = document.body.classList.contains("sky-view");
-    const shouldShow = !inSkyView && window.scrollY > 180;
-    btn.classList.toggle("hidden", !shouldShow);
-  };
-
   btn.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  window.addEventListener("scroll", updateVisibility, { passive: true });
-  window.addEventListener("resize", updateVisibility);
-  updateVisibility();
+  window.addEventListener("scroll", updateCardsBackToTopVisibility, { passive: true });
+  window.addEventListener("resize", updateCardsBackToTopVisibility);
+  updateCardsBackToTopVisibility();
 }
 
 function setupSpaceBackground() {

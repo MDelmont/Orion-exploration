@@ -631,7 +631,7 @@ main {
 .sky-map-floating-controls {
   position: absolute;
   right: 0.75rem;
-  bottom: 1.2rem;
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -913,8 +913,15 @@ body.sky-fullscreen {
 
 @media (max-width: 720px) {
   .sky-map-floating-controls {
-    right: 0.55rem;
-    bottom: 1.6rem;
+    position: fixed;
+    z-index: 1001;
+    right: 0.75rem;
+    bottom: calc(2.6rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* No longer need extra padding on the section when controls are fixed */
+  #sky-map-section {
+    padding-bottom: 0.5rem;
   }
 
   .sky-map-floating-controls button,
@@ -928,6 +935,26 @@ body.sky-fullscreen {
     top: 0.55rem;
     width: 2.8rem;
     height: 2.8rem;
+  }
+}
+
+@media (max-height: 620px) {
+  #sky-map-section {
+    padding-bottom: 0.5rem;
+  }
+
+  .sky-map-floating-controls {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    bottom: calc(1.4rem + env(safe-area-inset-bottom, 0px));
+    right: 0.65rem;
+  }
+
+  .sky-map-floating-controls button {
+    width: 2.35rem;
+    height: 2.35rem;
   }
 }
 
