@@ -2,7 +2,7 @@ const cardsConfig = [
   {
     "id": 1,
     "category": "encyclopedie",
-    "title": "Codex Culinaire Celeste",
+    "title": "Codex Culinaire Céleste",
     "typeCode": "EN",
     "rectoFile": "En_R_Codex-Culinaire-Celeste.svg",
     "versoFile": "En_V_Codex-Culinaire-Celeste.svg",
@@ -11,7 +11,7 @@ const cardsConfig = [
   {
     "id": 2,
     "category": "encyclopedie",
-    "title": "Constelation d orion",
+    "title": "Constelation d'orion",
     "typeCode": "EN",
     "rectoFile": "En_R_constelation-d-orion.svg",
     "versoFile": "En_V_constelation-d-orion.svg",
@@ -20,7 +20,7 @@ const cardsConfig = [
   {
     "id": 3,
     "category": "encyclopedie",
-    "title": "Constelation de cupidon",
+    "title": "Constelation de Cupidon",
     "typeCode": "EN",
     "rectoFile": "En_R_constelation-de-cupidon.svg",
     "versoFile": "En_V_constelation-de-cupidon.svg",
@@ -38,7 +38,7 @@ const cardsConfig = [
   {
     "id": 5,
     "category": "encyclopedie",
-    "title": "Constelation de sagittaire",
+    "title": "Constelation de Sagittaire",
     "typeCode": "EN",
     "rectoFile": "En_R_constelation-de-sagittaire.svg",
     "versoFile": "En_V_constelation-de-sagittaire.svg",
@@ -47,7 +47,7 @@ const cardsConfig = [
   {
     "id": 6,
     "category": "encyclopedie",
-    "title": "Constelation du lapin",
+    "title": "Constelation du Lapin",
     "typeCode": "EN",
     "rectoFile": "En_R_constelation-du-lapin.svg",
     "versoFile": "En_V_constelation-du-lapin.svg",
@@ -56,7 +56,7 @@ const cardsConfig = [
   {
     "id": 7,
     "category": "encyclopedie",
-    "title": "Constelation du scorpion",
+    "title": "Constelation du Scorpion",
     "typeCode": "EN",
     "rectoFile": "En_R_constelation-du-scorpion.svg",
     "versoFile": "En_V_constelation-du-scorpion.svg",
@@ -74,7 +74,7 @@ const cardsConfig = [
   {
     "id": 9,
     "category": "encyclopedie",
-    "title": "Le carre de retissage",
+    "title": "Le carré de retissage",
     "typeCode": "EN",
     "rectoFile": "En_R_Le-carre-de-retissage.svg",
     "versoFile": "En_V_Le-carre-de-retissage.svg",
@@ -101,7 +101,7 @@ const cardsConfig = [
   {
     "id": 12,
     "category": "encyclopedie",
-    "title": "Le treizieme lueur",
+    "title": "Le treizième lueur",
     "typeCode": "EN",
     "rectoFile": "En_R_Le-treizieme-lueur.svg",
     "versoFile": "En_V_Le-treizieme-lueur.svg",
@@ -110,7 +110,7 @@ const cardsConfig = [
   {
     "id": 13,
     "category": "encyclopedie",
-    "title": "Niveau de resonance",
+    "title": "Niveau de résonance",
     "typeCode": "EN",
     "rectoFile": "En_R_Niveau-de-resonance.svg",
     "versoFile": "En_V_Niveau-de-resonance.svg",
@@ -119,7 +119,7 @@ const cardsConfig = [
   {
     "id": 14,
     "category": "encyclopedie",
-    "title": "Nymirea",
+    "title": "Nymiréa",
     "typeCode": "EN",
     "rectoFile": "En_R_Nymirea.svg",
     "versoFile": "En_V_Nymirea.svg",
@@ -128,7 +128,7 @@ const cardsConfig = [
   {
     "id": 15,
     "category": "encyclopedie",
-    "title": "Pain doux de poussiere",
+    "title": "Pain doux de poussière",
     "typeCode": "EN",
     "rectoFile": "En_R_Pain-doux-de-poussiere.svg",
     "versoFile": "En_V_Pain-doux-de-poussiere.svg",
@@ -137,7 +137,7 @@ const cardsConfig = [
   {
     "id": 16,
     "category": "encyclopedie",
-    "title": "Riz au citron brule",
+    "title": "Riz au citron brûlé",
     "typeCode": "EN",
     "rectoFile": "En_R_Riz-au-citron-brule.svg",
     "versoFile": "En_V_Riz-au-citron-brule.svg",
@@ -146,7 +146,7 @@ const cardsConfig = [
   {
     "id": 17,
     "category": "encyclopedie",
-    "title": "Unite de poids par fleche",
+    "title": "Unité de poids par flèche",
     "typeCode": "EN",
     "rectoFile": "En_R_Unite-de-poids-par-fleche.svg",
     "versoFile": "En_V_Unite-de-poids-par-fleche.svg",
@@ -164,7 +164,7 @@ const cardsConfig = [
   {
     "id": 19,
     "category": "encyclopedie",
-    "title": "Zone Du Ciel",
+    "title": "Zone du Ciel",
     "typeCode": "EN",
     "rectoFile": "En_R_Zone-Du-Ciel.svg",
     "versoFile": "En_V_Zone-Du-Ciel.svg",
@@ -191,7 +191,7 @@ const cardsConfig = [
   {
     "id": 22,
     "category": "enigme",
-    "title": "L Accord des Trois",
+    "title": "L'Accord des Trois",
     "typeCode": "E",
     "rectoFile": "E_R_L-Accord-des-Trois_6.svg",
     "versoFile": "E_V_L-Accord-des-Trois_6.svg",
@@ -200,7 +200,7 @@ const cardsConfig = [
   {
     "id": 23,
     "category": "enigme",
-    "title": "L ami silencieux",
+    "title": "L'ami silencieux",
     "typeCode": "E",
     "rectoFile": "E_R_L-ami-silencieux_10.svg",
     "versoFile": "E_V_L-ami-silencieux_10.svg",
@@ -209,7 +209,7 @@ const cardsConfig = [
   {
     "id": 24,
     "category": "enigme",
-    "title": "L l alignement",
+    "title": "L'alignement",
     "typeCode": "E",
     "rectoFile": "E_R_L-l-alignement_12.svg",
     "versoFile": "E_V_L-l-alignement_12.svg",
@@ -218,7 +218,7 @@ const cardsConfig = [
   {
     "id": 25,
     "category": "enigme",
-    "title": "L trajectoire perdu",
+    "title": "La trajectoire perdue",
     "typeCode": "E",
     "rectoFile": "E_R_L-trajectoire-perdu_11.svg",
     "versoFile": "E_V_L-trajectoire-perdu_11.svg",
@@ -227,7 +227,7 @@ const cardsConfig = [
   {
     "id": 26,
     "category": "enigme",
-    "title": "La Couleurs des Cordes",
+    "title": "La couleurs des cordes",
     "typeCode": "E",
     "rectoFile": "E_R_La-Couleurs-des-Cordes_8.svg",
     "versoFile": "E_V_La-Couleurs-des-Cordes_8.svg",
@@ -245,7 +245,7 @@ const cardsConfig = [
   {
     "id": 28,
     "category": "enigme",
-    "title": "La Mémoire Des Cordes",
+    "title": "La mémoire des cordes",
     "typeCode": "E",
     "rectoFile": "E_R_La-Mémoire-Des-Cordes_5.svg",
     "versoFile": "E_V_La-Mémoire-Des-Cordes_5.svg",
@@ -254,7 +254,7 @@ const cardsConfig = [
   {
     "id": 29,
     "category": "enigme",
-    "title": "La Partition Oubliee",
+    "title": "La partition oubliée",
     "typeCode": "E",
     "rectoFile": "E_R_La-Partition-Oubliee_7.svg",
     "versoFile": "E_V_La-Partition-Oubliee_7.svg",
@@ -263,7 +263,7 @@ const cardsConfig = [
   {
     "id": 30,
     "category": "enigme",
-    "title": "La Partition Suspendu",
+    "title": "La partition suspendu",
     "typeCode": "E",
     "rectoFile": "E_R_La-Partition-Suspendu_4.svg",
     "versoFile": "E_V_La-Partition-Suspendu_4.svg",
@@ -272,7 +272,7 @@ const cardsConfig = [
   {
     "id": 31,
     "category": "enigme",
-    "title": "La Saveur Juste",
+    "title": "La saveur juste",
     "typeCode": "E",
     "rectoFile": "E_R_La-Saveur-Juste_13.svg",
     "versoFile": "E_V_La-Saveur-Juste_13.svg",
@@ -281,7 +281,7 @@ const cardsConfig = [
   {
     "id": 32,
     "category": "enigme",
-    "title": "La trame eperpillee",
+    "title": "La trame éparpillée",
     "typeCode": "E",
     "rectoFile": "E_R_La-trame-eperpillee_14.svg",
     "versoFile": "E_V_La-trame-eperpillee_14.svg",
@@ -299,7 +299,7 @@ const cardsConfig = [
   {
     "id": 34,
     "category": "enigme",
-    "title": "Ombre du Bond",
+    "title": "L'ombre du bond",
     "typeCode": "E",
     "rectoFile": "E_R_Ombre-du-Bond_1.svg",
     "versoFile": "E_V_Ombre-du-Bond_1.svg",
@@ -308,7 +308,7 @@ const cardsConfig = [
   {
     "id": 35,
     "category": "enigme",
-    "title": "S'Oriente dans le ciel",
+    "title": "S'orienter dans le ciel",
     "typeCode": "E",
     "rectoFile": "E_R_S-Oriente-dans-le-ciel_0.svg",
     "versoFile": "E_V_S-Oriente-dans-le-ciel_0.svg",
@@ -326,7 +326,7 @@ const cardsConfig = [
   {
     "id": 37,
     "category": "histoire",
-    "title": "Ancrage",
+    "title": "L'Ancrage",
     "typeCode": "H",
     "rectoFile": "H_R_Ancrage_155.svg",
     "versoFile": "H_V_Ancrage_155.svg",
@@ -335,7 +335,7 @@ const cardsConfig = [
   {
     "id": 38,
     "category": "histoire",
-    "title": "Appel Orion",
+    "title": "L'appel Orion",
     "typeCode": "H",
     "rectoFile": "H_R_Appel-Orion_1.svg",
     "versoFile": "H_V_Appel-orion_1.svg",
@@ -344,7 +344,7 @@ const cardsConfig = [
   {
     "id": 39,
     "category": "histoire",
-    "title": "Echo Retrouve",
+    "title": "L'écho retrouvé",
     "typeCode": "H",
     "rectoFile": "H_R_Echo-Retrouve_171.svg",
     "versoFile": "H_V_Echo-Retrouve_171.svg",
@@ -353,7 +353,7 @@ const cardsConfig = [
   {
     "id": 40,
     "category": "histoire",
-    "title": "Eveil Des Cordes",
+    "title": "L'éveil des cordes",
     "typeCode": "H",
     "rectoFile": "H_R_Eveil-Des-Cordes_103.svg",
     "versoFile": "H_V_Eveil-Des-Cordes_103.svg",
@@ -362,7 +362,7 @@ const cardsConfig = [
   {
     "id": 41,
     "category": "histoire",
-    "title": "Harmonie dispersee",
+    "title": "Harmonie dispersée",
     "typeCode": "H",
     "rectoFile": "H_R_Harmonie-dispersee_198.svg",
     "versoFile": "H_V_Harmonie-dispersee_198.svg",
@@ -371,7 +371,7 @@ const cardsConfig = [
   {
     "id": 42,
     "category": "histoire",
-    "title": "La Chromharmonie",
+    "title": "La chromharmonie",
     "typeCode": "H",
     "rectoFile": "H_R_La-Chromharmonie_716.svg",
     "versoFile": "H_V_La-Chromharmonie_716.svg",
@@ -380,7 +380,7 @@ const cardsConfig = [
   {
     "id": 43,
     "category": "histoire",
-    "title": "La Le Dernier Fragment",
+    "title": "Le dernier fragment",
     "typeCode": "H",
     "rectoFile": "H_R_La-Le-Dernier-Fragment_485.svg",
     "versoFile": "H_V_La-Le-Dernier-Fragment_485.svg",
@@ -389,7 +389,7 @@ const cardsConfig = [
   {
     "id": 44,
     "category": "histoire",
-    "title": "La Le Dessin Interieur",
+    "title": "Le dessin intérieur",
     "typeCode": "H",
     "rectoFile": "H_R_La-Le-Dessin-Interieur_706.svg",
     "versoFile": "H_V_La-Le-Dessin-Interieur_706.svg",
@@ -398,7 +398,7 @@ const cardsConfig = [
   {
     "id": 45,
     "category": "histoire",
-    "title": "La Le Port de Zubenelgenubi",
+    "title": "Le port de Zubenelgenubi",
     "typeCode": "H",
     "rectoFile": "H_R_La-Le-Port-de-Zubenelgenubi_380.svg",
     "versoFile": "H_V_La-Le-Port-de-Zubenelgenubi_380.svg",
@@ -407,7 +407,7 @@ const cardsConfig = [
   {
     "id": 46,
     "category": "histoire",
-    "title": "La Riviere qui Murmure",
+    "title": "La rivière qui murmure",
     "typeCode": "H",
     "rectoFile": "H_R_La-Riviere-qui-Murmure_365.svg",
     "versoFile": "H_V_La-Riviere-qui-Murmure_365.svg",
@@ -416,7 +416,7 @@ const cardsConfig = [
   {
     "id": 47,
     "category": "histoire",
-    "title": "Le Chant Retrouver",
+    "title": "Le chant retrouvé",
     "typeCode": "H",
     "rectoFile": "H_R_Le-Chant-Retrouver_273.svg",
     "versoFile": "H_V_Le-Chant-Retrouver_273.svg",
@@ -425,7 +425,7 @@ const cardsConfig = [
   {
     "id": 48,
     "category": "histoire",
-    "title": "Le Liberation",
+    "title": "Libération",
     "typeCode": "H",
     "rectoFile": "H_R_Le-Liberation_41.svg",
     "versoFile": "H_V_Le-Liberation_41.svg",
@@ -434,7 +434,7 @@ const cardsConfig = [
   {
     "id": 49,
     "category": "histoire",
-    "title": "Le Silence Se Tends",
+    "title": "Le silence se tend",
     "typeCode": "H",
     "rectoFile": "H_R_Le-Silence-Se-Tends_253.svg",
     "versoFile": "H_V_Le-Silence-Se-Tends_253.svg",
@@ -443,7 +443,7 @@ const cardsConfig = [
   {
     "id": 50,
     "category": "histoire",
-    "title": "Les Cordes Retrouvées",
+    "title": "Les cordes retrouvées",
     "typeCode": "H",
     "rectoFile": "H_R_Les-Cordes-Retrouvées_285.svg",
     "versoFile": "H_V_Les-Cordes-Retrouvées_285.svg",
@@ -452,7 +452,7 @@ const cardsConfig = [
   {
     "id": 51,
     "category": "histoire",
-    "title": "Oublie Du Sagittaire",
+    "title": "L'oubli du sagittaire",
     "typeCode": "H",
     "rectoFile": "H_R_Oublie-Du-Sagittaire_518.svg",
     "versoFile": "H_V_Oublie-Du-Sagittaire_518.svg",
@@ -461,7 +461,7 @@ const cardsConfig = [
   {
     "id": 52,
     "category": "histoire",
-    "title": "Recontre avec le Lapin",
+    "title": "Recontre avec le lapin",
     "typeCode": "H",
     "rectoFile": "H_R_Recontre-avec-le-Lapin_258.svg",
     "versoFile": "H_V_Recontre-avec-le-Lapin_258.svg",
