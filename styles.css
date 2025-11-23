@@ -958,3 +958,245 @@ body.sky-fullscreen {
   }
 }
 
+
+/* Solutions Page Styles */
+
+.solutions-main {
+  padding: 1rem;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+#solutions-container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-bottom: 4rem;
+}
+
+.solution-entry {
+  background: rgba(255, 215, 106, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  padding: 2rem;
+  scroll-margin-top: 2rem;
+}
+
+.solution-entry header h2 {
+  margin-top: 0;
+  color: var(--color-accent);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.solution-requirements,
+.solution-resolution {
+  margin-bottom: 2rem;
+}
+
+.solution-requirements h3,
+.solution-resolution h3 {
+  font-size: 1.2rem;
+  color: var(--color-text);
+  margin-bottom: 1rem;
+}
+
+.solution-requirements ul,
+.revealing-elements ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.solution-requirements li,
+.revealing-elements li {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.revealing-elements {
+  margin-bottom: 1.5rem;
+}
+
+.revealing-elements h4,
+.resolution-steps h4 {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.8rem;
+}
+
+.resolution-steps ol {
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.resolution-steps li {
+  line-height: 1.6;
+}
+
+.physical-elements-list {
+  margin-top: 1rem;
+  padding-left: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.physical-elements-list li {
+  background: rgba(255, 215, 106, 0.08);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  color: var(--color-text);
+  border: 1px solid rgba(255, 215, 106, 0.15);
+}
+/* ==================== HOME PAGE ==================== */
+
+.home-page {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+}
+
+.home-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    z-index: 2;
+}
+
+.home-title {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    margin: 0;
+    color: var(--color-text);
+    text-align: center;
+    text-shadow: 0 0 40px rgba(255, 215, 106, 0.6), 0 0 80px rgba(255, 215, 106, 0.3);
+    letter-spacing: 0.02em;
+    font-weight: 600;
+}
+
+.home-start-button {
+    background: transparent;
+    color: var(--color-text);
+    border: 1px solid rgba(255, 215, 106, 0.3);
+    border-radius: 999px;
+    padding: 0.65rem 2rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: border 0.2s ease, background 0.2s ease;
+}
+
+.home-start-button:hover {
+    border-color: rgba(255, 215, 106, 0.8);
+    background: rgba(255, 215, 106, 0.12);
+}
+
+.home-start-button:active {
+    background: var(--color-pin-active);
+    color: #1b1200;
+}
+
+/* Hide main app initially */
+body:not(.app-started) .app-header,
+body:not(.app-started) .app-shell {
+    display: none;
+}
+
+/* Hide home page after start */
+body.app-started .home-page {
+    display: none;
+}
+
+/* ==================== END HOME PAGE ==================== */
+
+/* ==================== HOME PAGE ==================== */
+
+.home-page {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.home-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  z-index: 2;
+}
+
+.home-title {
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  margin: 0;
+  color: var(--color-text);
+  text-align: center;
+  text-shadow: 0 0 40px rgba(255, 215, 106, 0.6), 0 0 80px rgba(255, 215, 106, 0.3);
+  letter-spacing: 0.02em;
+  font-weight: 600;
+}
+
+.home-start-button {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid rgba(255, 215, 106, 0.3);
+  border-radius: 999px;
+  padding: 0.65rem 2rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: border 0.2s ease, background 0.2s ease;
+}
+
+.home-start-button:hover {
+  border-color: rgba(255, 215, 106, 0.8);
+  background: rgba(255, 215, 106, 0.12);
+}
+
+.home-start-button:active {
+  background: var(--color-pin-active);
+  color: #1b1200;
+}
+
+/* Hide main app initially */
+body:not(.app-started) .app-header,
+body:not(.app-started) .app-shell {
+  display: none;
+}
+
+/* Hide home page after start */
+body.app-started .home-page {
+  display: none;
+}
+
+/* Brighter background on home page only */
+body:not(.app-started) body::before {
+  filter: brightness(1.5);
+}
+
+body:not(.app-started) body::after {
+  filter: brightness(1.8) saturate(1.5);
+}
+
+/* Much whiter/brighter SVG sprites on home page */
+body:not(.app-started) .space-sprites-layer {
+  opacity: 0.9;
+  filter: brightness(3) saturate(0.2) contrast(1.2);
+}
+
+/* ==================== END HOME PAGE ==================== */
