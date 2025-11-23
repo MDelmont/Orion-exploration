@@ -368,7 +368,23 @@ function setupBrandingClickHandler() {
         // Clear localStorage
         localStorage.removeItem("orion-app-started");
         localStorage.removeItem("orion-last-category");
-        // Don't reload - just toggle visibility
+
+        // Re-setup the start button event listener
+        const startButton = document.getElementById("start-button");
+        if (startButton) {
+          // Remove old listener by cloning the button
+          const newButton = startButton.cloneNode(true);
+          startButton.parentNode.replaceChild(newButton, startButton);
+
+          // Add new listener
+          newButton.addEventListener("click", () => {
+            document.body.classList.add("app-started");
+            localStorage.setItem("orion-app-started", "true");
+            localStorage.setItem("orion-last-category", "regles");
+            state.currentCategory = "regles";
+            renderAll();
+          });
+        }
       });
     }
   }, 100);
@@ -380,6 +396,46 @@ function saveCategory(category) {
     localStorage.setItem("orion-last-category", category);
   }
 }
+
+// Load card state from localStorage
+function loadCardState() {
+  try {
+    // Load pinned cards
+    const pinnedData = localStorage.getItem("orion-pinned-cards");
+    if (pinnedData) {
+      const pinnedArray = JSON.parse(pinnedData);
+      state.pinned = new Set(pinnedArray);
+    }
+
+    // Load card faces
+    const facesData = localStorage.getItem("orion-card-faces");
+    if (facesData) {
+      const facesObject = JSON.parse(facesData);
+      state.faceMap = new Map(Object.entries(facesObject).map(([k, v]) => [Number(k), v]));
+    }
+  } catch (error) {
+    console.error("Error loading card state:", error);
+  }
+}
+
+// Save card state to localStorage
+function saveCardState() {
+  try {
+    // Save pinned cards
+    const pinnedArray = Array.from(state.pinned);
+    localStorage.setItem("orion-pinned-cards", JSON.stringify(pinnedArray));
+
+    // Save card faces
+    const facesObject = {};
+    state.faceMap.forEach((face, cardId) => {
+      facesObject[cardId] = face;
+    });
+    localStorage.setItem("orion-card-faces", JSON.stringify(facesObject));
+  } catch (error) {
+    console.error("Error saving card state:", error);
+  }
+}
+
 
 
 function init() {
@@ -405,6 +461,9 @@ function init() {
     state.currentCategory = e.detail.category;
     renderAll();
   });
+
+  // Load saved card state (pinned cards and faces)
+  loadCardState();
 
   renderAll();
 }
@@ -1048,6 +1107,9 @@ function toggleFace(cardId) {
       snapInspectionToFace(nextFace);
     }
     renderSidebar();
+
+    // Save state to localStorage
+    saveCardState();
   };
 
   if (images.length > 0) {
@@ -1100,6 +1162,9 @@ function togglePin(cardId) {
 
   renderSidebar();
   updateInspection();
+
+  // Save state to localStorage
+  saveCardState();
 }
 
 function updatePinButtons(cardId) {
