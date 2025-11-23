@@ -1,4 +1,5 @@
 import cardsConfig, { cardDisplaySettings } from "./cardsConfig.js";
+import solutions from "./solutionsConfig.js";
 
 const CATEGORY_LABELS = {
   histoire: "Histoires",
@@ -6,6 +7,7 @@ const CATEGORY_LABELS = {
   encyclopedie: "Encyclopédie",
   epinglees: "Épinglées",
   carte: "Carte du ciel",
+  solutions: "Solutions",
 };
 
 const ICONS = {
@@ -252,12 +254,15 @@ function updateLayoutForCategory() {
 }
 
 function getCardElement(cardId) {
-  if (!elements.cardsContainer) {
+  const container =
+    state.currentCategory === "solutions"
+      ? elements.solutionsContainer
+      : elements.cardsContainer;
+
+  if (!container) {
     return null;
   }
-  return elements.cardsContainer.querySelector(
-    `.card[data-card-id="${cardId}"]`
-  );
+  return container.querySelector(`.card[data-card-id="${cardId}"]`);
 }
 
 function getCardImageElement(cardId) {
@@ -332,6 +337,8 @@ function cacheElements() {
   elements.cardsSection = document.getElementById("cards-section");
   elements.cardsContainer = document.getElementById("cards-container");
   elements.cardsEmpty = document.getElementById("cards-empty");
+  elements.solutionsSection = document.getElementById("solutions-section");
+  elements.solutionsContainer = document.getElementById("solutions-container");
   elements.skySection = document.getElementById("sky-map-section");
   elements.skyBackToTop = document.getElementById("sky-back-to-top");
   elements.cardsBackToTop = document.getElementById("cards-back-to-top");
@@ -424,6 +431,21 @@ function renderSidebar() {
     return;
   }
 
+  if (state.currentCategory === "solutions") {
+    elements.sidebarSubtitle.textContent = "Accès rapide";
+    setHidden(elements.sidebarEmpty, true);
+    solutions.forEach((solution) => {
+      const item = document.createElement("li");
+      item.textContent = solution.title;
+      item.addEventListener("click", () => {
+        const el = document.getElementById(solution.id);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      });
+      elements.sidebarList.appendChild(item);
+    });
+    return;
+  }
+
   if (!cards.length) {
     elements.sidebarSubtitle.textContent = "";
     setHidden(elements.sidebarEmpty, false);
@@ -432,9 +454,8 @@ function renderSidebar() {
 
   setHidden(elements.sidebarEmpty, true);
   const label = CATEGORY_LABELS[state.currentCategory] || "Cartes";
-  elements.sidebarSubtitle.textContent = `${cards.length} carte${
-    cards.length > 1 ? "s" : ""
-  } - ${label.toLowerCase()}`;
+  elements.sidebarSubtitle.textContent = `${cards.length} carte${cards.length > 1 ? "s" : ""
+    } - ${label.toLowerCase()}`;
 
   cards.forEach((card) => {
     const item = document.createElement("li");
@@ -444,6 +465,8 @@ function renderSidebar() {
     } else {
       const wrapper = document.createElement("div");
       const strong = document.createElement("strong");
+
+
       strong.textContent = card.number ?? card.id;
       wrapper.appendChild(strong);
       wrapper.appendChild(document.createTextNode(` - ${card.title}`));
@@ -459,15 +482,24 @@ function renderSidebar() {
   });
 }
 
-
 function renderMainArea() {
   if (state.currentCategory === "carte") {
     setHidden(elements.cardsSection, true);
+    setHidden(elements.solutionsSection, true);
     setHidden(elements.skySection, false);
     return;
   }
 
+  if (state.currentCategory === "solutions") {
+    setHidden(elements.cardsSection, true);
+    setHidden(elements.skySection, true);
+    setHidden(elements.solutionsSection, false);
+    renderSolutions();
+    return;
+  }
+
   setHidden(elements.cardsSection, false);
+  setHidden(elements.solutionsSection, true);
   setHidden(elements.skySection, true);
   const cards = getCardsForCurrentCategory();
   elements.cardsContainer.innerHTML = "";
@@ -481,6 +513,106 @@ function renderMainArea() {
   cards.forEach((card) => {
     const cardElement = buildCardElement(card);
     elements.cardsContainer.appendChild(cardElement);
+  });
+}
+
+function renderSolutions() {
+  elements.solutionsContainer.innerHTML = "";
+
+  solutions.forEach((solution) => {
+    const article = document.createElement("article");
+    article.id = solution.id;
+    article.className = "solution-entry";
+
+    const header = document.createElement("header");
+    const title = document.createElement("h2");
+    title.textContent = solution.title;
+    header.appendChild(title);
+    article.appendChild(header);
+
+    // Requirements Section
+    const reqSection = document.createElement("section");
+    reqSection.className = "solution-requirements";
+    reqSection.innerHTML = `<h3>Éléments nécessaires</h3>`;
+
+    // Cards Container
+    const cardsContainer = document.createElement("div");
+    cardsContainer.className = "cards-grid"; // Reuse existing grid class
+
+    const addCardItems = (ids) => {
+      ids.forEach(id => {
+        const card = cardsById.get(id);
+        if (card) {
+          const cardEl = buildCardElement(card);
+          cardsContainer.appendChild(cardEl);
+        }
+      });
+    };
+
+    addCardItems(solution.requirements.storyCards);
+    addCardItems(solution.requirements.enigmaCards);
+    addCardItems(solution.requirements.encyclopediaCards);
+
+    reqSection.appendChild(cardsContainer);
+
+    // Physical Elements List
+    if (solution.requirements.physicalElements.length > 0) {
+      const physList = document.createElement("ul");
+      physList.className = "physical-elements-list";
+      solution.requirements.physicalElements.forEach(elem => {
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>Élément physique :</strong> ${elem}`;
+        physList.appendChild(li);
+      });
+      reqSection.appendChild(physList);
+    }
+
+    article.appendChild(reqSection);
+
+    // Resolution Section
+    const resSection = document.createElement("section");
+    resSection.className = "solution-resolution";
+    resSection.innerHTML = `<h3>Résolution</h3>`;
+
+    // Revealing Elements
+    const revealingDiv = document.createElement("div");
+    revealingDiv.className = "revealing-elements";
+    revealingDiv.innerHTML = `<h4>Éléments révélateurs</h4>`;
+    const revealingList = document.createElement("ul");
+
+    solution.resolution.revealingElements.forEach(elem => {
+      const li = document.createElement("li");
+      li.innerHTML = `<strong>${elem.title}</strong>`;
+      if (elem.citations && elem.citations.length > 0) {
+        const citList = document.createElement("ul");
+        elem.citations.forEach(cit => {
+          const citLi = document.createElement("li");
+          citLi.textContent = `"${cit}"`;
+          citList.appendChild(citLi);
+        });
+        li.appendChild(citList);
+      }
+      revealingList.appendChild(li);
+    });
+    revealingDiv.appendChild(revealingList);
+    resSection.appendChild(revealingDiv);
+
+    // Steps
+    const stepsDiv = document.createElement("div");
+    stepsDiv.className = "resolution-steps";
+    stepsDiv.innerHTML = `<h4>Étapes</h4>`;
+    const stepsList = document.createElement("ol");
+
+    solution.resolution.steps.forEach(step => {
+      const li = document.createElement("li");
+      li.textContent = step;
+      stepsList.appendChild(li);
+    });
+    stepsDiv.appendChild(stepsList);
+    resSection.appendChild(stepsDiv);
+
+    article.appendChild(resSection);
+    elements.solutionsContainer.appendChild(article);
   });
 }
 
@@ -498,6 +630,13 @@ function getCardsForCurrentCategory() {
   );
 }
 
+
+
+
+function getCardFace(cardId) {
+  return state.faceMap.get(cardId) || "recto";
+}
+
 function buildCardElement(card) {
   const face = getCardFace(card.id);
   const article = document.createElement("article");
@@ -511,9 +650,8 @@ function buildCardElement(card) {
 
   const meta = document.createElement("div");
   meta.className = "card-meta";
-  meta.innerHTML = `<span>${CATEGORY_LABELS[card.category] || ""}</span><span>${
-    face === "recto" ? "Recto" : "Verso"
-  }</span>`;
+  meta.innerHTML = `<span>${CATEGORY_LABELS[card.category] || ""}</span><span>${face === "recto" ? "Recto" : "Verso"
+    }</span>`;
   article.appendChild(meta);
 
   const image = document.createElement("img");
@@ -559,10 +697,6 @@ function buildCardElement(card) {
 
   article.appendChild(actions);
   return article;
-}
-
-function getCardFace(cardId) {
-  return state.faceMap.get(cardId) || "verso";
 }
 
 function toggleFace(cardId) {
@@ -626,8 +760,13 @@ function togglePin(cardId) {
 }
 
 function updatePinButtons(cardId) {
-  const cardSelector = `.card[data-card-id="${cardId}"]`;
-  const cardElement = elements.cardsContainer.querySelector(cardSelector);
+  const container =
+    state.currentCategory === "solutions"
+      ? elements.solutionsContainer
+      : elements.cardsContainer;
+  if (!container) return;
+
+  const cardElement = container.querySelector(`.card[data-card-id="${cardId}"]`);
   if (!cardElement) {
     return;
   }
@@ -650,7 +789,7 @@ function buildImageSrc(card, face) {
   if (!folder) {
     return "";
   }
-  return `${folder}${face === "recto" ? card.rectoFile : card.versoFile}`;
+  return `${folder}${face === "recto" ? card.rectoFile : card.versoFile} `;
 }
 
 function openInspection(cardId) {
@@ -1437,3 +1576,4 @@ function animateSpaceSprite(sprite, definition) {
     once: true,
   });
 }
+
