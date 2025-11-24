@@ -114,6 +114,12 @@ body {
   position: relative;
   overflow-x: hidden;
   isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
 }
 
 body.inspection-open {
@@ -1150,6 +1156,11 @@ body.app-started .home-page {
   text-shadow: 0 0 40px rgba(255, 215, 106, 0.6), 0 0 80px rgba(255, 215, 106, 0.3);
   letter-spacing: 0.02em;
   font-weight: 600;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
 }
 
 .home-start-button {
