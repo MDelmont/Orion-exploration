@@ -37,11 +37,20 @@ export const solutions = [
                     citations: [
                         "Object triangulaire à sommet plat, conçu en bois",
                         "Titre de la carte : « le sextant »",
+                        "Premier paragraphe de la partie usage."
                     ],
                 },
                 {
                     title: "Carte encyclopédie : La Treizième Lueur",
-                    citations: ["Là où tout commence."],
+                    citations: ["Titre de la carte :  “La treizième lueur”", "Là où tout commence."],
+                },
+                {
+                    title: "Le Sextant",
+                    citations: ["Symbole sur les lignes : α, β, γ."],
+                },
+                {
+                    title: "Registre du sextant",
+                    citations: ["Listes de symbole associer à des numéro."],
                 },
             ],
             steps: [
@@ -116,7 +125,7 @@ export const solutions = [
         requirements: {
             storyCards: [52, 49],
             enigmaCards: [21],
-            encyclopediaCards: [18, 17, 2, 3],
+            encyclopediaCards: [18, 17, 2, 3, 53],
             physicalElements: [physicalElements.carteCiel, physicalElements.gabaritLapinVerso, physicalElements.sextant],
         },
         resolution: {
@@ -124,6 +133,22 @@ export const solutions = [
                 {
                     title: "Carte énigme n°3",
                     citations: ["Poses le sextant là où le ciel refuse les autres.", "Trouve la flèche qui le complète."],
+                },
+                {
+                    title: "Carte histoire n°258 : Rencontre avec le Lapin",
+                    citations: ["Un noyau blindé, un bouclier autonome, ça les protège."],
+                },
+                {
+                    title: "Carte encyclopédie : Constellation d’Orion",
+                    citations: ["La flèche de rappel, plus fine, portait deux crochets au milieu de sa tige. Conçue pour emporter sans blesser, elle devait être tirée en plusieurs exemplaires. Leur nombre s’ajustait au poids de ce qu’il fallait ramener."],
+                },
+                {
+                    title: "Carte encyclopédie : Constellation de Cupidon",
+                    citations: ["une pointe en cœur, creuse, faite pour s’encastrer."],
+                },
+                {
+                    title: "Carte encyclopédie : Trou noir",
+                    citations: ["Chaque éclat avalé l’alourdit. Chaque souvenir pris s’ajoute au total scellé"],
                 },
             ],
             steps: [

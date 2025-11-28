@@ -180,6 +180,15 @@ const cardsConfig = [
     "number": null
   },
   {
+    "id": 53,
+    "category": "encyclopedie",
+    "title": "Trou noir",
+    "typeCode": "EN",
+    "rectoFile": "En_R_Trou-noir.svg",
+    "versoFile": "En_V_Trou-noir.svg",
+    "number": null
+  },
+  {
     "id": 21,
     "category": "enigme",
     "title": "Coeur Viseur Fleche",
