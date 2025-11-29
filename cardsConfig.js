@@ -189,6 +189,15 @@ const cardsConfig = [
     "number": null
   },
   {
+    "id": 54,
+    "category": "encyclopedie",
+    "title": "Carte du ciel",
+    "typeCode": "EN",
+    "rectoFile": "En_R_carte-du-ciel.svg",
+    "versoFile": "En_V_carte-du-ciel.svg",
+    "number": null
+  },
+  {
     "id": 21,
     "category": "enigme",
     "title": "Coeur Viseur Fleche",
