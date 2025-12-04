@@ -11,69 +11,6 @@ const encyclopedieCards = [
   {
     "id": 2,
     "category": "encyclopedie",
-    "title": "Constelation d'orion",
-    "typeCode": "EN",
-    "rectoFile": "En_R_constelation-d-orion.svg",
-    "versoFile": "En_V_constelation-d-orion.svg",
-    "number": null
-  },
-  {
-    "id": 3,
-    "category": "encyclopedie",
-    "title": "Constelation de Cupidon",
-    "typeCode": "EN",
-    "rectoFile": "En_R_constelation-de-cupidon.svg",
-    "versoFile": "En_V_constelation-de-cupidon.svg",
-    "number": null
-  },
-  {
-    "id": 4,
-    "category": "encyclopedie",
-    "title": "Constelation de la lyre",
-    "typeCode": "EN",
-    "rectoFile": "En_R_constelation-de-la-lyre.svg",
-    "versoFile": "En_V_constelation-de-la-lyre.svg",
-    "number": null
-  },
-  {
-    "id": 5,
-    "category": "encyclopedie",
-    "title": "Constelation de Sagittaire",
-    "typeCode": "EN",
-    "rectoFile": "En_R_constelation-de-sagittaire.svg",
-    "versoFile": "En_V_constelation-de-sagittaire.svg",
-    "number": null
-  },
-  {
-    "id": 6,
-    "category": "encyclopedie",
-    "title": "Constelation du Lapin",
-    "typeCode": "EN",
-    "rectoFile": "En_R_constelation-du-lapin.svg",
-    "versoFile": "En_V_constelation-du-lapin.svg",
-    "number": null
-  },
-  {
-    "id": 7,
-    "category": "encyclopedie",
-    "title": "Constelation du Scorpion",
-    "typeCode": "EN",
-    "rectoFile": "En_R_constelation-du-scorpion.svg",
-    "versoFile": "En_V_constelation-du-scorpion.svg",
-    "number": null
-  },
-  {
-    "id": 8,
-    "category": "encyclopedie",
-    "title": "Flan de lumière acidulé",
-    "typeCode": "EN",
-    "rectoFile": "En_R_flan-de-lumière-acidulé.svg",
-    "versoFile": "En_V_flan-de-lumière-acidulé.svg",
-    "number": null
-  },
-  {
-    "id": 9,
-    "category": "encyclopedie",
     "title": "Le carré de retissage",
     "typeCode": "EN",
     "rectoFile": "En_R_Le-carre-de-retissage.svg",
@@ -81,7 +18,7 @@ const encyclopedieCards = [
     "number": null
   },
   {
-    "id": 10,
+    "id": 3,
     "category": "encyclopedie",
     "title": "Le choeur suspendu",
     "typeCode": "EN",
@@ -90,7 +27,7 @@ const encyclopedieCards = [
     "number": null
   },
   {
-    "id": 11,
+    "id": 4,
     "category": "encyclopedie",
     "title": "Le sextant",
     "typeCode": "EN",
@@ -99,16 +36,16 @@ const encyclopedieCards = [
     "number": null
   },
   {
-    "id": 12,
+    "id": 5,
     "category": "encyclopedie",
-    "title": "Le treizième lueur",
+    "title": "La treizième lueur",
     "typeCode": "EN",
     "rectoFile": "En_R_Le-treizieme-lueur.svg",
     "versoFile": "En_V_Le-treizieme-lueur.svg",
     "number": null
   },
   {
-    "id": 13,
+    "id": 6,
     "category": "encyclopedie",
     "title": "Niveau de résonance",
     "typeCode": "EN",
@@ -117,7 +54,7 @@ const encyclopedieCards = [
     "number": null
   },
   {
-    "id": 14,
+    "id": 7,
     "category": "encyclopedie",
     "title": "Nymiréa",
     "typeCode": "EN",
@@ -126,7 +63,7 @@ const encyclopedieCards = [
     "number": null
   },
   {
-    "id": 15,
+    "id": 8,
     "category": "encyclopedie",
     "title": "Pain doux de poussière",
     "typeCode": "EN",
@@ -135,7 +72,7 @@ const encyclopedieCards = [
     "number": null
   },
   {
-    "id": 16,
+    "id": 9,
     "category": "encyclopedie",
     "title": "Riz au citron brûlé",
     "typeCode": "EN",
@@ -144,43 +81,7 @@ const encyclopedieCards = [
     "number": null
   },
   {
-    "id": 17,
-    "category": "encyclopedie",
-    "title": "Unité de poids par flèche",
-    "typeCode": "EN",
-    "rectoFile": "En_R_Unite-de-poids-par-fleche.svg",
-    "versoFile": "En_V_Unite-de-poids-par-fleche.svg",
-    "number": null
-  },
-  {
-    "id": 18,
-    "category": "encyclopedie",
-    "title": "Vaisseau dans le ciel",
-    "typeCode": "EN",
-    "rectoFile": "En_R_Vaisseau-dans-le-ciel.svg",
-    "versoFile": "En_V_Vaisseau-dans-le-ciel.svg",
-    "number": null
-  },
-  {
-    "id": 19,
-    "category": "encyclopedie",
-    "title": "Zone du Ciel",
-    "typeCode": "EN",
-    "rectoFile": "En_R_Zone-Du-Ciel.svg",
-    "versoFile": "En_V_Zone-Du-Ciel.svg",
-    "number": null
-  },
-  {
-    "id": 20,
-    "category": "encyclopedie",
-    "title": "Zubenelgenubi",
-    "typeCode": "EN",
-    "rectoFile": "En_R_Zubenelgenubi.svg",
-    "versoFile": "En_V_Zubenelgenubi.svg",
-    "number": null
-  },
-  {
-    "id": 53,
+    "id": 10,
     "category": "encyclopedie",
     "title": "Trou noir",
     "typeCode": "EN",
@@ -189,12 +90,111 @@ const encyclopedieCards = [
     "number": null
   },
   {
-    "id": 54,
+    "id": 11,
+    "category": "encyclopedie",
+    "title": "Unité de poids par flèche",
+    "typeCode": "EN",
+    "rectoFile": "En_R_Unite-de-poids-par-fleche.svg",
+    "versoFile": "En_V_Unite-de-poids-par-fleche.svg",
+    "number": null
+  },
+  {
+    "id": 12,
+    "category": "encyclopedie",
+    "title": "Vaisseau dans le ciel",
+    "typeCode": "EN",
+    "rectoFile": "En_R_Vaisseau-dans-le-ciel.svg",
+    "versoFile": "En_V_Vaisseau-dans-le-ciel.svg",
+    "number": null
+  },
+  {
+    "id": 13,
+    "category": "encyclopedie",
+    "title": "Zone du Ciel",
+    "typeCode": "EN",
+    "rectoFile": "En_R_Zone-Du-Ciel.svg",
+    "versoFile": "En_V_Zone-Du-Ciel.svg",
+    "number": null
+  },
+  {
+    "id": 14,
+    "category": "encyclopedie",
+    "title": "Zubenelgenubi",
+    "typeCode": "EN",
+    "rectoFile": "En_R_Zubenelgenubi.svg",
+    "versoFile": "En_V_Zubenelgenubi.svg",
+    "number": null
+  },
+  {
+    "id": 15,
     "category": "encyclopedie",
     "title": "Carte du ciel",
     "typeCode": "EN",
     "rectoFile": "En_R_carte-du-ciel.svg",
     "versoFile": "En_V_carte-du-ciel.svg",
+    "number": null
+  },
+  {
+    "id": 16,
+    "category": "encyclopedie",
+    "title": "Constellation d'Orion",
+    "typeCode": "EN",
+    "rectoFile": "En_R_constelation-d-orion.svg",
+    "versoFile": "En_V_constelation-d-orion.svg",
+    "number": null
+  },
+  {
+    "id": 17,
+    "category": "encyclopedie",
+    "title": "Constellation de Cupidon",
+    "typeCode": "EN",
+    "rectoFile": "En_R_constelation-de-cupidon.svg",
+    "versoFile": "En_V_constelation-de-cupidon.svg",
+    "number": null
+  },
+  {
+    "id": 18,
+    "category": "encyclopedie",
+    "title": "Constellation de la Lyre",
+    "typeCode": "EN",
+    "rectoFile": "En_R_constelation-de-la-lyre.svg",
+    "versoFile": "En_V_constelation-de-la-lyre.svg",
+    "number": null
+  },
+  {
+    "id": 19,
+    "category": "encyclopedie",
+    "title": "Constellation du Sagittaire",
+    "typeCode": "EN",
+    "rectoFile": "En_R_constelation-de-sagittaire.svg",
+    "versoFile": "En_V_constelation-de-sagittaire.svg",
+    "number": null
+  },
+  {
+    "id": 20,
+    "category": "encyclopedie",
+    "title": "Constellation du Lapin",
+    "typeCode": "EN",
+    "rectoFile": "En_R_constelation-du-lapin.svg",
+    "versoFile": "En_V_constelation-du-lapin.svg",
+    "number": null
+  },
+  {
+    "id": 21,
+    "category": "encyclopedie",
+    "title": "Constellation du Scorpion",
+    "typeCode": "EN",
+    "rectoFile": "En_R_constelation-du-scorpion.svg",
+    "versoFile": "En_V_constelation-du-scorpion.svg",
+    "number": null
+  },
+  {
+    "id": 22,
+    "category": "encyclopedie",
+    "title": "Flan de lumière acidulé",
+    "typeCode": "EN",
+    "rectoFile": "En_R_flan-de-lumière-acidulé.svg",
+    "versoFile": "En_V_flan-de-lumière-acidulé.svg",
     "number": null
   }
 ];
