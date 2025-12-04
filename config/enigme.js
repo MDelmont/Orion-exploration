@@ -29,119 +29,146 @@ const enigmeCards = [
   {
     "id": 303,
     "category": "enigme",
-    "title": "Coeur Viseur Fleche",
+    "title": "Calibration du cœur",
     "typeCode": "E",
-    "rectoFile": "E_R_Coeur-Viseur-Fleche_3.svg",
-    "versoFile": "E_V_Coeur-Viseur-Fleche_3.svg",
+    "rectoFile": "E_R_Calibration-du-cœur_3.svg",
+    "versoFile": "E_V_Calibration-du-cœur_3.svg",
     "number": 3
   },
   {
     "id": 304,
     "category": "enigme",
-    "title": "La partition suspendu",
+    "title": "Viseur flèche",
     "typeCode": "E",
-    "rectoFile": "E_R_La-Partition-Suspendu_4.svg",
-    "versoFile": "E_V_La-Partition-Suspendu_4.svg",
+    "rectoFile": "E_R_Viseur-fleche_4.svg",
+    "versoFile": "E_V_Viseur-fleche_4.svg",
     "number": 4
   },
   {
     "id": 305,
     "category": "enigme",
-    "title": "La mémoire des cordes",
+    "title": "La Partition Suspendue",
     "typeCode": "E",
-    "rectoFile": "E_R_La-Mémoire-Des-Cordes_5.svg",
-    "versoFile": "E_V_La-Mémoire-Des-Cordes_5.svg",
+    "rectoFile": "E_R_La-Partition-Suspendu_5.svg",
+    "versoFile": "E_V_La-Partition-Suspendu_5.svg",
     "number": 5
   },
   {
     "id": 306,
     "category": "enigme",
-    "title": "L'Accord des Trois",
+    "title": "La Mémoire Des Cordes",
     "typeCode": "E",
-    "rectoFile": "E_R_L-Accord-des-Trois_6.svg",
-    "versoFile": "E_V_L-Accord-des-Trois_6.svg",
+    "rectoFile": "E_R_La-Mémoire-Des-Cordes_6.svg",
+    "versoFile": "E_V_La-Mémoire-Des-Cordes_6.svg",
     "number": 6
   },
   {
     "id": 307,
     "category": "enigme",
-    "title": "La partition oubliée",
+    "title": "L'Accord des Trois",
     "typeCode": "E",
-    "rectoFile": "E_R_La-Partition-Oubliee_7.svg",
-    "versoFile": "E_V_La-Partition-Oubliee_7.svg",
+    "rectoFile": "E_R_L-Accord-des-Trois_7.svg",
+    "versoFile": "E_V_L-Accord-des-Trois_7.svg",
     "number": 7
   },
   {
     "id": 308,
     "category": "enigme",
-    "title": "La couleurs des cordes",
+    "title": "La Partition Oubliée",
     "typeCode": "E",
-    "rectoFile": "E_R_La-Couleurs-des-Cordes_8.svg",
-    "versoFile": "E_V_La-Couleurs-des-Cordes_8.svg",
+    "rectoFile": "E_R_La-Partition-Oubliee_8.svg",
+    "versoFile": "E_V_La-Partition-Oubliee_8.svg",
     "number": 8
   },
   {
     "id": 309,
     "category": "enigme",
-    "title": "La Lumiere Juste",
+    "title": "La Couleurs des Cordes",
     "typeCode": "E",
-    "rectoFile": "E_R_La-Lumiere-Juste_9.svg",
-    "versoFile": "E_V_La-Lumiere-Juste_9.svg",
+    "rectoFile": "E_R_La-Couleurs-des-Cordes_9.svg",
+    "versoFile": "E_V_La-Couleurs-des-Cordes_9.svg",
     "number": 9
   },
   {
     "id": 310,
     "category": "enigme",
-    "title": "L'ami silencieux",
+    "title": "La Lumière Juste",
     "typeCode": "E",
-    "rectoFile": "E_R_L-ami-silencieux_10.svg",
-    "versoFile": "E_V_L-ami-silencieux_10.svg",
+    "rectoFile": "E_R_La-Lumiere-Juste_10.svg",
+    "versoFile": "E_V_La-Lumiere-Juste_10.svg",
     "number": 10
   },
   {
     "id": 311,
     "category": "enigme",
-    "title": "La trajectoire perdue",
+    "title": "L'ami silencieux",
     "typeCode": "E",
-    "rectoFile": "E_R_L-trajectoire-perdu_11.svg",
-    "versoFile": "E_V_L-trajectoire-perdu_11.svg",
+    "rectoFile": "E_R_L-ami-silencieux_11.svg",
+    "versoFile": "E_V_L-ami-silencieux_11.svg",
     "number": 11
   },
   {
     "id": 312,
     "category": "enigme",
-    "title": "L'alignement",
+    "title": "L'oubli en marche",
     "typeCode": "E",
-    "rectoFile": "E_R_L-l-alignement_12.svg",
-    "versoFile": "E_V_L-l-alignement_12.svg",
+    "rectoFile": "E_R_l-oublie-en-marche_12.svg",
+    "versoFile": "E_V_l-oublie-en-marche_12.svg",
     "number": 12
   },
   {
     "id": 313,
     "category": "enigme",
-    "title": "La saveur juste",
+    "title": "La trajectoire perdue",
     "typeCode": "E",
-    "rectoFile": "E_R_La-Saveur-Juste_13.svg",
-    "versoFile": "E_V_La-Saveur-Juste_13.svg",
+    "rectoFile": "E_R_la-trajectoire-perdu_13.svg",
+    "versoFile": "E_V_la-trajectoire-perdu_13.svg",
     "number": 13
   },
   {
     "id": 314,
     "category": "enigme",
-    "title": "La trame éparpillée",
+    "title": "L'alignement",
     "typeCode": "E",
-    "rectoFile": "E_R_La-trame-eperpillee_14.svg",
-    "versoFile": "E_V_La-trame-eperpillee_14.svg",
+    "rectoFile": "E_R_L-l-alignement_14.svg",
+    "versoFile": "E_V_L-l-alignement_14.svg",
     "number": 14
   },
   {
     "id": 315,
     "category": "enigme",
+    "title": "La Saveur Juste",
+    "typeCode": "E",
+    "rectoFile": "E_R_La-Saveur-Juste_15.svg",
+    "versoFile": "E_V_La-Saveur-Juste_15.svg",
+    "number": 15
+  },
+  {
+    "id": 316,
+    "category": "enigme",
+    "title": "La trame éparpillée",
+    "typeCode": "E",
+    "rectoFile": "E_R_La-trame-eperpillee_16.svg",
+    "versoFile": "E_V_La-trame-eperpillee_16.svg",
+    "number": 16
+  },
+  {
+    "id": 317,
+    "category": "enigme",
     "title": "Le secret des astres",
     "typeCode": "E",
-    "rectoFile": "E_R_Le-secret-des-astres_15.svg",
-    "versoFile": "E_V_Le-secret-des-astres_15.svg",
-    "number": 15
+    "rectoFile": "E_R_Le-secret-des-astres_17.svg",
+    "versoFile": "E_V_Le-secret-des-astres_17.svg",
+    "number": 17
+  },
+  {
+    "id": 318,
+    "category": "enigme",
+    "title": "La ceinture d'Orion",
+    "typeCode": "E",
+    "rectoFile": "E_R_La-ceinture-d-Orion_T.svg",
+    "versoFile": "E_V_La-ceinture-d-Orion_T.svg",
+    "number": "T"
   }
 ];
 
