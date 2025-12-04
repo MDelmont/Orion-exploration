@@ -447,6 +447,7 @@ main {
   min-height: 2.6rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   word-break: break-word;
@@ -455,7 +456,7 @@ main {
 
 .card img {
   width: auto;
-  max-width: 100%;
+  max-width: var(--card-max-width, 350px);
   height: var(--card-image-height);
   margin: 0 auto;
   border-radius: 0.65rem;
@@ -471,6 +472,34 @@ main {
 
 .card img.is-flipping {
   animation: card-flip 0.4s ease forwards;
+}
+
+/* Landscape cards (indices) use width as reference instead of height */
+.cards-grid .card:has(img[src*="indices/"]) img {
+  width: var(--card-max-width, 350px);
+  height: auto;
+  max-width: var(--card-max-width, 350px);
+}
+
+/* Reduce spacing for landscape cards (indices) */
+.cards-grid .card:has(img[src*="indices/"]) {
+  gap: 0.2rem;
+  padding: 0.35rem;
+}
+
+.cards-grid .card:has(img[src*="indices/"]) h3 {
+  min-height: 1.5rem;
+  font-size: 0.9rem;
+  padding-bottom: 0;
+}
+
+.cards-grid .card:has(img[src*="indices/"]) .card-meta {
+  margin-top: -0.05rem;
+  font-size: 0.75rem;
+}
+
+.cards-grid .card:has(img[src*="indices/"]) .card-actions {
+  margin-top: 0.2rem;
 }
 
 .card-meta {

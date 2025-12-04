@@ -6,6 +6,7 @@ const CATEGORY_LABELS = {
   histoire: "Histoires",
   enigme: "Énigmes",
   encyclopedie: "Encyclopédie",
+  indice: "Indices",
   epinglees: "Épinglées",
   carte: "Carte du ciel",
   solutions: "Solutions",
@@ -39,12 +40,15 @@ const CATEGORY_FOLDERS = {
   histoire: "images/cartes/histoires/",
   enigme: "images/cartes/enigmes/",
   encyclopedie: "images/cartes/encyclopedies/",
+  indice: "images/cartes/",
 };
 
+// Real dimensions in mm
 const CATEGORY_ASPECT_DIMENSIONS = {
-  histoire: { width: 298, height: 420 },
-  encyclopedie: { width: 298, height: 420 },
-  enigme: { width: 199, height: 341 },
+  histoire: { width: 105, height: 148 },        // Portrait
+  encyclopedie: { width: 105, height: 148 },    // Portrait
+  enigme: { width: 70, height: 120 },           // Portrait étroit
+  indice: { width: 52, height: 37 },            // Paysage
 };
 
 const DEFAULT_ASPECT_DIMENSIONS = { width: 63, height: 88 };
@@ -233,10 +237,10 @@ function resolveSpaceDefinition(definition) {
 }
 
 function formatCardTitle(card) {
-  if (card.category === "encyclopedie") {
+  if (card.category === "encyclopedie" || card.category === "indice") {
     return card.title;
   }
-  return `${card.number} - ${card.title}`;
+  return `Carte ${card.category} n°${card.number}`;
 }
 
 function setPinIcon(button, isPinned) {
@@ -496,19 +500,31 @@ function cacheElements() {
 }
 
 function applyDisplaySettings() {
-  if (
-    cardDisplaySettings &&
-    typeof cardDisplaySettings.cardHeight === "number" &&
-    Number.isFinite(cardDisplaySettings.cardHeight) &&
-    cardDisplaySettings.cardHeight > 0
-  ) {
+  // Get settings from config with defaults
+  const height = cardDisplaySettings?.cardHeight || 420;
+  const maxWidth = cardDisplaySettings?.cardMaxWidth || 350;
+  
+  // Set the reference height for all cards
+  document.documentElement.style.setProperty("--card-image-height", `${height}px`);
+  
+  // Set max width constraint
+  document.documentElement.style.setProperty("--card-max-width", `${maxWidth}px`);
+  
+  // Calculate and set individual card widths based on aspect ratio
+  Object.entries(CATEGORY_ASPECT_DIMENSIONS).forEach(([category, dims]) => {
+    const aspectRatio = dims.width / dims.height;
+    let calculatedWidth = height * aspectRatio;
+    
+    // Apply max width constraint
+    if (calculatedWidth > maxWidth) {
+      calculatedWidth = maxWidth;
+    }
+    
     document.documentElement.style.setProperty(
-      "--card-image-height",
-      `${cardDisplaySettings.cardHeight}px`
+      `--card-width-${category}`,
+      `${Math.round(calculatedWidth)}px`
     );
-  } else {
-    document.documentElement.style.setProperty("--card-image-height", "auto");
-  }
+  });
 }
 
 function bindNavigation() {
@@ -623,16 +639,15 @@ function renderSidebar() {
   cards.forEach((card) => {
     const item = document.createElement("li");
     item.dataset.cardId = card.id;
-    if (card.category === "encyclopedie") {
+    if (card.category === "encyclopedie" || card.category === "indice") {
       item.textContent = card.title;
     } else {
       const wrapper = document.createElement("div");
       const strong = document.createElement("strong");
 
 
-      strong.textContent = card.number ?? card.id;
+      strong.textContent = formatCardTitle(card);
       wrapper.appendChild(strong);
-      wrapper.appendChild(document.createTextNode(` - ${card.title}`));
       item.appendChild(wrapper);
     }
     const faceLabel = document.createElement("span");
@@ -1052,19 +1067,22 @@ function buildCardElement(card) {
   flipButton.addEventListener("click", () => toggleFace(card.id));
   actions.appendChild(flipButton);
 
-  const pinButton = document.createElement("button");
-  pinButton.type = "button";
-  pinButton.dataset.action = "pin";
-  const isPinned = state.pinned.has(card.id);
-  setPinIcon(pinButton, isPinned);
-  pinButton.setAttribute(
-    "aria-label",
-    isPinned ? "Retirer des épinglées" : "Épingler cette carte"
-  );
-  pinButton.title = isPinned ? "Retirer des épinglées" : "Épingler";
-  pinButton.classList.toggle("pin-active", isPinned);
-  pinButton.addEventListener("click", () => togglePin(card.id));
-  actions.appendChild(pinButton);
+  // Don't show pin button for indice cards
+  if (card.category !== "indice") {
+    const pinButton = document.createElement("button");
+    pinButton.type = "button";
+    pinButton.dataset.action = "pin";
+    const isPinned = state.pinned.has(card.id);
+    setPinIcon(pinButton, isPinned);
+    pinButton.setAttribute(
+      "aria-label",
+      isPinned ? "Retirer des épinglées" : "Épingler cette carte"
+    );
+    pinButton.title = isPinned ? "Retirer des épinglées" : "Épingler";
+    pinButton.classList.toggle("pin-active", isPinned);
+    pinButton.addEventListener("click", () => togglePin(card.id));
+    actions.appendChild(pinButton);
+  }
 
   const inspectButton = document.createElement("button");
   inspectButton.type = "button";
@@ -1244,14 +1262,22 @@ function updateInspection() {
     buildImageSrc(card, "verso"),
     `${card.title} (verso)`
   );
-  const isPinned = state.pinned.has(card.id);
-  setPinIcon(elements.inspectionPinBtn, isPinned);
-  const pinLabel = isPinned
-    ? "Retirer des epingles"
-    : "Epingler cette carte";
-  elements.inspectionPinBtn.setAttribute("aria-label", pinLabel);
-  elements.inspectionPinBtn.title = pinLabel;
-  elements.inspectionPinBtn.classList.toggle("pin-active", isPinned);
+  
+  // Hide pin button for indice cards
+  if (card.category === "indice") {
+    elements.inspectionPinBtn.style.display = "none";
+  } else {
+    elements.inspectionPinBtn.style.display = "";
+    const isPinned = state.pinned.has(card.id);
+    setPinIcon(elements.inspectionPinBtn, isPinned);
+    const pinLabel = isPinned
+      ? "Retirer des epingles"
+      : "Epingler cette carte";
+    elements.inspectionPinBtn.setAttribute("aria-label", pinLabel);
+    elements.inspectionPinBtn.title = pinLabel;
+    elements.inspectionPinBtn.classList.toggle("pin-active", isPinned);
+  }
+  
   syncInspectionAspectRatio(card);
 }
 
