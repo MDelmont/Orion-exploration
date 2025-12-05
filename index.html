@@ -79,7 +79,138 @@
       </section>
 
       <section id="rules-section" class="hidden" aria-live="polite">
-        <div id="rules-container"></div>
+        <div id="rules-container">
+          <!-- Interactive Book Viewer with integrated zoom (like sky map) -->
+          <div class="rules-book-container">
+            <!-- Stage with overflow hidden for zoom clipping -->
+            <div class="rules-book-stage" id="rulesBookStage">
+              <div class="rules-book-wrapper" id="rulesBookWrapper">
+                <!-- Book Area -->
+                <div class="rules-book-area" id="rulesBookArea">
+                  <!-- Book Spine -->
+                  <div class="rules-book-spine hidden" id="rulesBookSpine"></div>
+
+                  <!-- Right side with flipping pages -->
+                  <div class="rules-right-side cover-mode" id="rulesRightSide">
+                    <!-- Page 0: Couverture -->
+                    <div class="rules-page" data-page="0">
+                      <div class="rules-page-front">
+                        <img src="images/regles/couverture.svg" alt="Couverture des règles">
+                      </div>
+                      <div class="rules-page-back">
+                        <img src="images/regles/neutral-page.svg" alt="Dos de page">
+                      </div>
+                    </div>
+
+                    <!-- Page 1 -->
+                    <div class="rules-page" data-page="1">
+                      <div class="rules-page-front">
+                        <img src="images/regles/page-1.svg" alt="Page 1">
+                      </div>
+                      <div class="rules-page-back">
+                        <img src="images/regles/neutral-page.svg" alt="Dos de page">
+                      </div>
+                    </div>
+
+                    <!-- Page 2 -->
+                    <div class="rules-page" data-page="2">
+                      <div class="rules-page-front">
+                        <img src="images/regles/page-2.svg" alt="Page 2">
+                      </div>
+                      <div class="rules-page-back">
+                        <img src="images/regles/neutral-page.svg" alt="Dos de page">
+                      </div>
+                    </div>
+
+                    <!-- Page 3 -->
+                    <div class="rules-page" data-page="3">
+                      <div class="rules-page-front">
+                        <img src="images/regles/page-3.svg" alt="Page 3">
+                      </div>
+                      <div class="rules-page-back">
+                        <img src="images/regles/neutral-page.svg" alt="Dos de page">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Floating Zoom Controls (like sky map) -->
+            <div class="rules-floating-controls">
+              <button id="rulesZoomOut" type="button" aria-label="Zoom arrière" title="Dézoomer">
+                &#8722;
+              </button>
+              <span id="rulesZoomDisplay" class="rules-zoom-percent">100%</span>
+              <button id="rulesZoomReset" type="button" aria-label="Réinitialiser le zoom" title="Réinitialiser">
+                &#10227;
+              </button>
+              <button id="rulesZoomIn" type="button" aria-label="Zoom avant" title="Zoomer">
+                &#43;
+              </button>
+              <button id="rulesFullscreenToggle" type="button" aria-label="Plein écran" title="Plein écran">
+                &#9633;
+              </button>
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="rules-controls">
+              <button class="rules-nav-btn" id="rulesPrevBtn" disabled type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M15 18l-6-6 6-6"/>
+                </svg>
+                Précédent
+              </button>
+
+              <span class="rules-page-indicator" id="rulesPageIndicator">Couverture</span>
+
+              <button class="rules-nav-btn" id="rulesNextBtn" type="button">
+                Suivant
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Thumbnails -->
+            <div class="rules-thumbnails">
+              <div class="rules-thumbnail-wrapper">
+                <div class="rules-thumbnail active" data-goto="0">
+                  <img src="images/regles/couverture.svg" alt="Couverture">
+                </div>
+                <div class="rules-thumbnail-label">Couverture</div>
+              </div>
+              <div class="rules-thumbnail-wrapper">
+                <div class="rules-thumbnail" data-goto="1">
+                  <img src="images/regles/page-1.svg" alt="Page 1">
+                </div>
+                <div class="rules-thumbnail-label">Page 1</div>
+              </div>
+              <div class="rules-thumbnail-wrapper">
+                <div class="rules-thumbnail" data-goto="2">
+                  <img src="images/regles/page-2.svg" alt="Page 2">
+                </div>
+                <div class="rules-thumbnail-label">Page 2</div>
+              </div>
+              <div class="rules-thumbnail-wrapper">
+                <div class="rules-thumbnail" data-goto="3">
+                  <img src="images/regles/page-3.svg" alt="Page 3">
+                </div>
+                <div class="rules-thumbnail-label">Page 3</div>
+              </div>
+            </div>
+
+            <p class="rules-instructions">
+              Utilisez la molette ou les boutons pour zoomer, double-cliquez pour agrandir<br>
+              <small>Cliquez sur les flèches ou utilisez ← → au clavier pour naviguer même en mode zoom</small>
+            </p>
+          </div>
+        </div>
+
+        <!-- Fullscreen exit button -->
+        <button id="rulesFullscreenExit" class="rules-fullscreen-exit hidden" type="button" aria-label="Quitter le plein écran">
+          &#10005;
+        </button>
       </section>
 
       <section id="sky-map-section" class="hidden" aria-label="Carte du ciel interactive">

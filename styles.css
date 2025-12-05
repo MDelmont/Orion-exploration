@@ -1240,3 +1240,470 @@ body:not(.app-started) .space-sprites-layer {
 }
 
 /* ==================== END HOME PAGE ==================== */
+
+/* ==================== RULES BOOK VIEWER ==================== */
+
+.rules-book-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1.5rem 1rem;
+  min-height: calc(100vh - var(--header-height) - 2rem);
+  position: relative;
+}
+
+/* Stage with overflow hidden (like sky-map-stage) */
+.rules-book-stage {
+  flex: 1;
+  min-height: 0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: transparent;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  width: 100%;
+  /* On laisse la hauteur s'adapter au contenu (le livre) */
+  /* Le padding assure que le livre ne touche pas les bords du stage */
+  padding: 1rem; 
+}
+
+.rules-book-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transform-origin: center center;
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+  cursor: grab;
+  perspective: 2000px;
+}
+
+.rules-book-wrapper:active {
+  cursor: grabbing;
+}
+
+.rules-book-area {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Book Spine */
+.rules-book-spine {
+  width: 12px;
+  height: var(--rules-book-height, min(60vh, 500px));
+  background: linear-gradient(90deg, 
+    #2a1f0a 0%, 
+    #5a4530 30%, 
+    #6b4b2d 50%,
+    #5a4530 70%, 
+    #2a1f0a 100%);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+  transition: opacity 0.5s ease, width 0.5s ease;
+}
+
+.rules-book-spine.hidden {
+  opacity: 0;
+  width: 0;
+}
+
+/* Right side (flipping pages) */
+.rules-right-side {
+  --rules-book-width: min(38vw, 380px);
+  --rules-book-height: calc(var(--rules-book-width) * 1.414);
+  position: relative;
+  width: var(--rules-book-width);
+  height: var(--rules-book-height);
+  transform-style: preserve-3d;
+}
+
+/* Pages */
+.rules-page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+.rules-page-front,
+.rules-page-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 0 8px 8px 0;
+  overflow: hidden;
+  box-shadow: 
+    5px 5px 20px rgba(0, 0, 0, 0.5),
+    inset -3px 0 10px rgba(0, 0, 0, 0.05);
+  background: #00033B;
+}
+
+.rules-page-front {
+  z-index: 2;
+}
+
+.rules-page-back {
+  transform: rotateY(180deg);
+  border-radius: 8px 0 0 8px;
+  box-shadow: 
+    -5px 5px 20px rgba(0, 0, 0, 0.5),
+    inset 3px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.rules-page.flipped {
+  transform: rotateY(-180deg);
+  z-index: 100;
+}
+
+.rules-page img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Page Stack Effect */
+.rules-page:nth-child(1) { z-index: 4; }
+.rules-page:nth-child(2) { z-index: 3; }
+.rules-page:nth-child(3) { z-index: 2; }
+.rules-page:nth-child(4) { z-index: 1; }
+
+/* Cover mode - single page centered */
+.rules-right-side.cover-mode {
+  border-radius: 8px;
+}
+
+.rules-right-side.cover-mode .rules-page-front {
+  border-radius: 8px;
+}
+
+/* Controls */
+.rules-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.rules-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.3rem;
+  background: transparent;
+  border: 1px solid rgba(255, 215, 106, 0.35);
+  border-radius: 50px;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.rules-nav-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--color-accent);
+  background: rgba(255, 215, 106, 0.1);
+}
+
+.rules-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.rules-nav-btn svg {
+  width: 18px;
+  height: 18px;
+  margin: 0 0.4rem;
+}
+
+.rules-page-indicator {
+  font-size: 1rem;
+  color: var(--color-accent);
+  min-width: 100px;
+  text-align: center;
+}
+
+/* Page Thumbnails */
+.rules-thumbnails {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+  padding: 0.8rem 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  flex-wrap: wrap;
+  justify-content: center;
+  border: 1px solid rgba(255, 215, 106, 0.15);
+}
+
+.rules-thumbnail-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rules-thumbnail {
+  width: 50px;
+  height: 70px;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  background: #00033B;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.rules-thumbnail:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 215, 106, 0.5);
+}
+
+.rules-thumbnail.active {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 15px rgba(255, 215, 106, 0.5);
+}
+
+.rules-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.rules-thumbnail-label {
+  font-size: 0.65rem;
+  text-align: center;
+  padding-top: 0.3rem;
+  color: var(--color-text-muted);
+}
+
+/* Instructions */
+.rules-instructions {
+  text-align: center;
+  margin-top: 1rem;
+  padding: 0.8rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+.rules-instructions small {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+/* ========== FLOATING ZOOM CONTROLS ========== */
+.rules-floating-controls {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  z-index: 10;
+}
+
+.rules-floating-controls button,
+.rules-fullscreen-exit {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 215, 106, 0.35);
+  background: rgba(0, 0, 0, 0.45);
+  color: var(--color-text);
+  font-size: 1.1rem;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rules-floating-controls button:hover,
+.rules-fullscreen-exit:hover {
+  border-color: var(--color-accent);
+  background: rgba(255, 215, 106, 0.15);
+  transform: scale(1.05);
+}
+
+.rules-zoom-percent {
+  font-size: 0.7rem;
+  color: var(--color-text);
+  text-align: center;
+  min-width: 2.5rem;
+  padding: 0.3rem;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 215, 106, 0.2);
+  border-radius: 0.5rem;
+  backdrop-filter: blur(6px);
+}
+
+.rules-fullscreen-exit {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 1001;
+  width: 2.8rem;
+  height: 2.8rem;
+  font-size: 1.3rem;
+}
+
+.rules-fullscreen-exit.hidden {
+  display: none;
+}
+
+/* ========== RULES FULLSCREEN MODE ========== */
+body.rules-fullscreen .app-header {
+  display: none;
+}
+
+body.rules-fullscreen .app-shell {
+  grid-template-columns: 1fr;
+}
+
+body.rules-fullscreen #sidebar {
+  display: none;
+}
+
+body.rules-fullscreen #rules-section {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--color-bg);
+}
+
+body.rules-fullscreen .rules-book-container {
+  min-height: 100vh;
+  padding: 0; /* On enlève le padding en plein écran pour maximiser l'espace */
+  height: 100vh; /* Force la hauteur */
+}
+
+body.rules-fullscreen .rules-book-stage {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border-radius: 0;
+}
+
+body.rules-fullscreen .rules-right-side {
+  --rules-book-width: min(55vw, 550px);
+}
+
+body.rules-fullscreen {
+  overflow: hidden;
+}
+
+/* ========== ZOOM TRANSFORM ========== */
+.rules-book-wrapper {
+  transform-origin: center center;
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+  touch-action: none;
+}
+
+/* Rules Section Layout */
+#rules-section {
+  position: relative;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#rules-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========== RESPONSIVE RULES BOOK ========== */
+@media (max-width: 900px) {
+  .rules-right-side {
+    --rules-book-width: min(50vw, 320px);
+  }
+
+  .rules-book-spine {
+    width: 8px;
+  }
+
+  .rules-floating-controls {
+    right: 0.5rem;
+  }
+
+  .rules-floating-controls button {
+    width: 2.2rem;
+    height: 2.2rem;
+    font-size: 1rem;
+  }
+
+  .rules-zoom-percent {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .rules-right-side {
+    --rules-book-width: 75vw;
+  }
+
+  .rules-book-spine {
+    display: none !important;
+  }
+
+  .rules-controls {
+    gap: 0.5rem;
+  }
+
+  .rules-nav-btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .rules-thumbnail {
+    width: 40px;
+    height: 56px;
+  }
+
+  .rules-floating-controls {
+    position: fixed;
+    right: 0.5rem;
+    top: auto;
+    bottom: 1rem;
+    transform: none;
+    flex-direction: row;
+    z-index: 100;
+  }
+
+  .rules-floating-controls button {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  body.rules-fullscreen .rules-right-side {
+    --rules-book-width: 90vw;
+  }
+
+  body.rules-fullscreen .rules-book-container {
+    padding: 1rem;
+  }
+}
+
+/* ==================== END RULES BOOK VIEWER ==================== */

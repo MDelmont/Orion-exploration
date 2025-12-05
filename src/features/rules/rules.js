@@ -1,8 +1,64 @@
 /**
- * Module des règles
+ * Module des règles - Livre interactif 3D avec zoom intégré
+ * Le zoom fonctionne directement sur le livre (comme la carte du ciel)
  */
 
 import { elements } from "../../state/appState.js";
+import { clamp } from "../../utils/dom.js";
+
+// Configuration des pages du livre
+const rulesPages = [
+  { name: 'Couverture', file: 'images/regles/couverture.svg' },
+  { name: 'Page 1', file: 'images/regles/page-1.svg' },
+  { name: 'Page 2', file: 'images/regles/page-2.svg' },
+  { name: 'Page 3', file: 'images/regles/page-3.svg' }
+];
+
+// État du livre
+let currentRulesPage = 0;
+let rulesInitialized = false;
+
+// Éléments DOM du livre
+let rulesElements = {
+  bookSpine: null,
+  rightSide: null,
+  bookArea: null,
+  bookStage: null,
+  bookWrapper: null,
+  prevBtn: null,
+  nextBtn: null,
+  pageIndicator: null,
+  thumbnails: null,
+  // Contrôles de zoom intégrés
+  zoomInBtn: null,
+  zoomOutBtn: null,
+  resetZoomBtn: null,
+  zoomDisplay: null,
+  fullscreenBtn: null,
+  fullscreenExitBtn: null
+};
+
+// État du zoom intégré sur le livre
+const bookZoomState = {
+  scale: 1,
+  translateX: 0,
+  translateY: 0,
+  isPanning: false,
+  startX: 0,
+  startY: 0,
+  hasMoved: false,
+  minScale: 1,
+  maxScale: 5,
+  isFullscreen: false
+};
+
+// État tactile
+const touchState = {
+  pinchStartDistance: 0,
+  pinchStartScale: 1,
+  lastTouchX: 0,
+  lastTouchY: 0
+};
 
 /**
  * Cache les éléments DOM des règles
@@ -13,208 +69,460 @@ export function cacheRulesElements() {
 }
 
 /**
+ * Cache les éléments du livre
+ */
+function cacheBookElements() {
+  rulesElements.bookSpine = document.getElementById('rulesBookSpine');
+  rulesElements.rightSide = document.getElementById('rulesRightSide');
+  rulesElements.bookArea = document.getElementById('rulesBookArea');
+  rulesElements.bookStage = document.getElementById('rulesBookStage');
+  rulesElements.bookWrapper = document.getElementById('rulesBookWrapper');
+  rulesElements.prevBtn = document.getElementById('rulesPrevBtn');
+  rulesElements.nextBtn = document.getElementById('rulesNextBtn');
+  rulesElements.pageIndicator = document.getElementById('rulesPageIndicator');
+  rulesElements.thumbnails = document.querySelectorAll('.rules-thumbnail');
+  
+  // Contrôles de zoom intégrés
+  rulesElements.zoomInBtn = document.getElementById('rulesZoomIn');
+  rulesElements.zoomOutBtn = document.getElementById('rulesZoomOut');
+  rulesElements.resetZoomBtn = document.getElementById('rulesZoomReset');
+  rulesElements.zoomDisplay = document.getElementById('rulesZoomDisplay');
+  rulesElements.fullscreenBtn = document.getElementById('rulesFullscreenToggle');
+  rulesElements.fullscreenExitBtn = document.getElementById('rulesFullscreenExit');
+}
+
+/**
+ * Navigue vers une page spécifique
+ */
+function goToPage(pageIndex) {
+  if (pageIndex < 0 || pageIndex >= rulesPages.length) return;
+
+  const pageElements = document.querySelectorAll('.rules-page');
+  
+  // Retourner les pages
+  pageElements.forEach((page, index) => {
+    if (index < pageIndex) {
+      page.classList.add('flipped');
+    } else {
+      page.classList.remove('flipped');
+    }
+  });
+
+  // Gestion du mode couverture
+  if (pageIndex === 0) {
+    rulesElements.bookSpine?.classList.add('hidden');
+    rulesElements.rightSide?.classList.add('cover-mode');
+  } else {
+    rulesElements.bookSpine?.classList.remove('hidden');
+    rulesElements.rightSide?.classList.remove('cover-mode');
+  }
+
+  currentRulesPage = pageIndex;
+  
+  // Quand on change de page, on garde le zoom mais on recentre la position
+  centerBookPan();
+  updateControls();
+}
+
+/**
+ * Met à jour les contrôles
+ */
+function updateControls() {
+  if (!rulesElements.prevBtn || !rulesElements.nextBtn) return;
+  
+  rulesElements.prevBtn.disabled = currentRulesPage === 0;
+  rulesElements.nextBtn.disabled = currentRulesPage === rulesPages.length - 1;
+  
+  if (rulesElements.pageIndicator) {
+    rulesElements.pageIndicator.textContent = rulesPages[currentRulesPage].name;
+  }
+
+  rulesElements.thumbnails?.forEach((thumb, index) => {
+    thumb.classList.toggle('active', index === currentRulesPage);
+  });
+}
+
+/**
+ * Page suivante
+ */
+function nextPage() {
+  if (currentRulesPage < rulesPages.length - 1) {
+    goToPage(currentRulesPage + 1);
+  }
+}
+
+/**
+ * Page précédente
+ */
+function prevPage() {
+  if (currentRulesPage > 0) {
+    goToPage(currentRulesPage - 1);
+  }
+}
+
+// ==================== ZOOM INTÉGRÉ SUR LE LIVRE ====================
+
+/**
+ * Limite le déplacement (pan) pour éviter de sortir des limites
+ * Utilise le stage comme référence (comme la skymap)
+ */
+function clampBookPan() {
+  const stage = rulesElements.bookStage;
+  if (!stage) return;
+  
+  const rect = stage.getBoundingClientRect();
+  const overflowX = Math.max(0, (rect.width * bookZoomState.scale - rect.width) / 2);
+  const overflowY = Math.max(0, (rect.height * bookZoomState.scale - rect.height) / 2);
+  
+  bookZoomState.translateX = clamp(bookZoomState.translateX, -overflowX, overflowX);
+  bookZoomState.translateY = clamp(bookZoomState.translateY, -overflowY, overflowY);
+}
+
+/**
+ * Met à jour la transformation du livre (zoom + pan)
+ */
+function updateBookTransform() {
+  if (!rulesElements.bookWrapper) return;
+  
+  clampBookPan();
+  rulesElements.bookWrapper.style.transform = `translate(${bookZoomState.translateX}px, ${bookZoomState.translateY}px) scale(${bookZoomState.scale})`;
+  
+  // Mettre à jour l'affichage du pourcentage
+  if (rulesElements.zoomDisplay) {
+    rulesElements.zoomDisplay.textContent = Math.round(bookZoomState.scale * 100) + '%';
+  }
+  
+  // Mettre à jour le curseur
+  if (rulesElements.bookWrapper) {
+    rulesElements.bookWrapper.style.cursor = bookZoomState.scale > 1 ? 'grab' : 'default';
+  }
+}
+
+/**
+ * Zoom avant sur le livre
+ */
+function zoomInBook(delta = 0.25) {
+  bookZoomState.scale = clamp(bookZoomState.scale + delta, bookZoomState.minScale, bookZoomState.maxScale);
+  updateBookTransform();
+}
+
+/**
+ * Zoom arrière sur le livre
+ */
+function zoomOutBook(delta = 0.25) {
+  bookZoomState.scale = clamp(bookZoomState.scale - delta, bookZoomState.minScale, bookZoomState.maxScale);
+  
+  // Si on revient à l'échelle normale, réinitialiser la position
+  if (bookZoomState.scale <= 1) {
+    bookZoomState.translateX = 0;
+    bookZoomState.translateY = 0;
+  }
+  updateBookTransform();
+}
+
+/**
+ * Recentre la position sans changer le zoom
+ */
+function centerBookPan() {
+  bookZoomState.translateX = 0;
+  bookZoomState.translateY = 0;
+  updateBookTransform();
+}
+
+/**
+ * Réinitialise le zoom du livre
+ */
+function resetBookZoom() {
+  bookZoomState.scale = 1;
+  bookZoomState.translateX = 0;
+  bookZoomState.translateY = 0;
+  updateBookTransform();
+}
+
+/**
+ * Démarre le pan (glissement)
+ */
+function beginBookPan(clientX, clientY, { skipCursor = false } = {}) {
+  if (bookZoomState.scale <= 1) return; // Pas de pan si pas zoomé
+  
+  bookZoomState.isPanning = true;
+  bookZoomState.hasMoved = false;
+  bookZoomState.startX = clientX - bookZoomState.translateX;
+  bookZoomState.startY = clientY - bookZoomState.translateY;
+  
+  if (!skipCursor && rulesElements.bookWrapper) {
+    rulesElements.bookWrapper.style.cursor = 'grabbing';
+  }
+}
+
+/**
+ * Déplace le pan
+ */
+function moveBookPan(clientX, clientY) {
+  if (!bookZoomState.isPanning) return;
+  
+  const newX = clientX - bookZoomState.startX;
+  const newY = clientY - bookZoomState.startY;
+
+  // Si on bouge de plus de 5px, on considère que c'est un mouvement (pas un clic)
+  if (Math.abs(newX - bookZoomState.translateX) > 5 || Math.abs(newY - bookZoomState.translateY) > 5) {
+    bookZoomState.hasMoved = true;
+  }
+  
+  bookZoomState.translateX = newX;
+  bookZoomState.translateY = newY;
+  updateBookTransform();
+}
+
+/**
+ * Arrête le pan
+ */
+function stopBookPan({ skipCursor = false } = {}) {
+  bookZoomState.isPanning = false;
+  
+  if (!skipCursor && rulesElements.bookWrapper && bookZoomState.scale > 1) {
+    rulesElements.bookWrapper.style.cursor = 'grab';
+  }
+}
+
+/**
+ * Gère la distance entre deux doigts (pinch)
+ */
+function getTouchDistance(touchList) {
+  if (!touchList || touchList.length < 2) return 0;
+  const [a, b] = touchList;
+  return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+}
+
+// ==================== PLEIN ÉCRAN ====================
+
+/**
+ * Entre en mode plein écran
+ */
+function enterFullscreen() {
+  if (bookZoomState.isFullscreen) return;
+  
+  bookZoomState.isFullscreen = true;
+  document.body.classList.add('rules-fullscreen');
+  rulesElements.fullscreenExitBtn?.classList.remove('hidden');
+}
+
+/**
+ * Sort du mode plein écran
+ */
+function exitFullscreen() {
+  if (!bookZoomState.isFullscreen) return;
+  
+  bookZoomState.isFullscreen = false;
+  document.body.classList.remove('rules-fullscreen');
+  rulesElements.fullscreenExitBtn?.classList.add('hidden');
+  
+  // Reset zoom en sortant du plein écran
+  resetBookZoom();
+}
+
+// ==================== ÉVÉNEMENTS ====================
+
+/**
+ * Lie les événements du livre
+ */
+function bindBookEvents() {
+  // Navigation principale
+  rulesElements.prevBtn?.addEventListener('click', prevPage);
+  rulesElements.nextBtn?.addEventListener('click', nextPage);
+
+  // Miniatures
+  rulesElements.thumbnails?.forEach((thumb, index) => {
+    thumb.addEventListener('click', () => goToPage(index));
+  });
+
+  // Clics sur les pages pour navigation
+  document.querySelectorAll('.rules-page').forEach(page => {
+    page.addEventListener('click', (e) => {
+      // Si zoomé ET qu'on a bougé (pan), on ne change pas de page
+      if (bookZoomState.scale > 1 && bookZoomState.hasMoved) return;
+      
+      const rect = page.getBoundingClientRect();
+      // En mode zoom, le rect peut être grand, mais le clic est relatif au viewport
+      // On veut savoir si on a cliqué sur la moitié droite ou gauche de la page VISIBLE ou de la page réelle ?
+      // La logique originale utilisait rect.left.
+      // Avec le zoom, la page est transformée. getBoundingClientRect retourne les dimensions transformées.
+      
+      const clickX = e.clientX - rect.left;
+      
+      if (clickX > rect.width / 2) {
+        nextPage();
+      } else {
+        prevPage();
+      }
+    });
+  });
+}
+
+/**
+ * Lie les événements de zoom sur le livre
+ * Utilise le stage pour les événements (comme la skymap)
+ */
+function bindZoomEvents() {
+  const stage = rulesElements.bookStage;
+  const bookWrapper = rulesElements.bookWrapper;
+  
+  if (!stage || !bookWrapper) return;
+  
+  // Boutons de zoom
+  rulesElements.zoomInBtn?.addEventListener('click', () => zoomInBook(0.25));
+  rulesElements.zoomOutBtn?.addEventListener('click', () => zoomOutBook(0.25));
+  rulesElements.resetZoomBtn?.addEventListener('click', resetBookZoom);
+  
+  // Plein écran
+  rulesElements.fullscreenBtn?.addEventListener('click', () => {
+    if (bookZoomState.isFullscreen) {
+      exitFullscreen();
+    } else {
+      enterFullscreen();
+    }
+  });
+  rulesElements.fullscreenExitBtn?.addEventListener('click', exitFullscreen);
+  
+  // Zoom à la molette
+  stage.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const delta = e.deltaY < 0 ? 0.15 : -0.15;
+    
+    if (delta > 0) {
+      zoomInBook(delta);
+    } else {
+      zoomOutBook(-delta);
+    }
+  }, { passive: false });
+  
+  // Double-clic pour réinitialiser ou zoomer
+  stage.addEventListener('dblclick', (e) => {
+    e.preventDefault();
+    if (bookZoomState.scale > 1) {
+      resetBookZoom();
+    } else {
+      zoomInBook(1); // Zoom x2
+    }
+  });
+  
+  // Souris - Pan
+  stage.addEventListener('mousedown', (e) => {
+    if (bookZoomState.scale <= 1) return;
+    e.preventDefault();
+    beginBookPan(e.clientX, e.clientY);
+  });
+  
+  window.addEventListener('mousemove', (e) => {
+    if (!bookZoomState.isPanning) return;
+    moveBookPan(e.clientX, e.clientY);
+  });
+  
+  window.addEventListener('mouseup', () => {
+    stopBookPan();
+  });
+  
+  // Touch - Pan et Pinch
+  stage.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      if (bookZoomState.scale > 1) {
+        e.preventDefault();
+        touchState.pinchStartDistance = 0;
+        touchState.pinchStartScale = bookZoomState.scale;
+        const touch = e.touches[0];
+        beginBookPan(touch.clientX, touch.clientY, { skipCursor: true });
+      }
+    } else if (e.touches.length === 2) {
+      e.preventDefault();
+      touchState.pinchStartDistance = getTouchDistance(e.touches);
+      touchState.pinchStartScale = bookZoomState.scale;
+      stopBookPan({ skipCursor: true });
+    }
+  }, { passive: false });
+  
+  stage.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      const distance = getTouchDistance(e.touches);
+      if (!touchState.pinchStartDistance) {
+        touchState.pinchStartDistance = distance;
+        touchState.pinchStartScale = bookZoomState.scale;
+      }
+      const scaleFactor = touchState.pinchStartDistance === 0 ? 1 : distance / touchState.pinchStartDistance;
+      bookZoomState.scale = clamp(touchState.pinchStartScale * scaleFactor, bookZoomState.minScale, bookZoomState.maxScale);
+      updateBookTransform();
+      return;
+    }
+    if (e.touches.length === 1 && bookZoomState.isPanning) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      moveBookPan(touch.clientX, touch.clientY);
+    }
+  }, { passive: false });
+  
+  stage.addEventListener('touchend', (e) => {
+    if (e.touches.length === 0) {
+      touchState.pinchStartDistance = 0;
+      touchState.pinchStartScale = bookZoomState.scale;
+      stopBookPan({ skipCursor: true });
+      return;
+    }
+    if (e.touches.length === 1) {
+      touchState.pinchStartDistance = 0;
+      touchState.pinchStartScale = bookZoomState.scale;
+      if (bookZoomState.scale > 1) {
+        const touch = e.touches[0];
+        beginBookPan(touch.clientX, touch.clientY, { skipCursor: true });
+      }
+    }
+  });
+  
+  stage.addEventListener('touchcancel', () => {
+    stopBookPan({ skipCursor: true });
+  });
+  
+  // Navigation clavier
+  document.addEventListener('keydown', (e) => {
+    // Vérifier qu'on est sur la section des règles
+    if (elements.rulesSection?.classList.contains('hidden')) return;
+    
+    if (e.key === 'Escape') {
+      if (bookZoomState.isFullscreen) {
+        exitFullscreen();
+      } else if (bookZoomState.scale > 1) {
+        resetBookZoom();
+      }
+    }
+    if (e.key === 'ArrowRight') nextPage();
+    if (e.key === 'ArrowLeft') prevPage();
+    if (e.key === '+' || e.key === '=') zoomInBook(0.25);
+    if (e.key === '-') zoomOutBook(0.25);
+    if (e.key === '0') resetBookZoom();
+  });
+}
+
+/**
+ * Initialise le livre des règles
+ */
+function initRulesBook() {
+  if (rulesInitialized) return;
+  
+  cacheBookElements();
+  bindBookEvents();
+  bindZoomEvents();
+  updateControls();
+  updateBookTransform();
+  
+  rulesInitialized = true;
+}
+
+/**
  * Rend la section des règles
  */
 export function renderRules() {
-  elements.rulesContainer.innerHTML = "";
-
-  // Section Règles du jeu
-  const rulesArticle = document.createElement("article");
-  rulesArticle.id = "regles-jeu";
-  rulesArticle.className = "solution-entry";
-
-  const rulesHeader = document.createElement("header");
-  const rulesTitle = document.createElement("h2");
-  rulesTitle.textContent = "Règles du jeu";
-  rulesHeader.appendChild(rulesTitle);
-  rulesArticle.appendChild(rulesHeader);
-
-  const rulesContent = document.createElement("div");
-  rulesContent.className = "rules-content";
-  rulesContent.innerHTML = `
-    <section>
-      <h3>1. Objectif</h3>
-      <p>Résoudre toutes les énigmes dans l'ordre et retrouver les <strong>trois étoiles d'Orion</strong>, représentées par les <strong>3 diapositives avec photo</strong>.</p>
-    </section>
-
-    <section>
-      <h3>2. Contenu (vu comme de simples outils)</h3>
-      <ul>
-        <li>17 <strong>cartes Histoire</strong></li>
-        <li>16 <strong>cartes Énigme</strong> (numérotées 0 à 15)</li>
-        <li>20 <strong>cartes Encyclopédie</strong></li>
-        <li>1 <strong>carte du ciel</strong></li>
-        <li>2 <strong>pièces triangulaires en bois</strong></li>
-        <li>3 <strong>gabaries rectangulaires en bois</strong></li>
-        <li>5 <strong>diapositives colorées</strong> (rouge, vert, bleu, jaune, violet)</li>
-        <li>3 <strong>diapositives avec photo</strong> → ce sont les <strong>étoiles d'Orion</strong>, à récupérer à la dernière énigme</li>
-        <li>papier / crayon (optionnel mais utile)</li>
-      </ul>
-      <p>Aucun de ces éléments n'est "verrouillé" en cours de jeu, sauf les 3 diapositives-photo que vous ne devez utiliser qu'à la toute fin.</p>
-    </section>
-
-    <section>
-      <h3>3. Mise en place</h3>
-      <ol>
-        <li><strong>Cartes Histoire</strong> : Former une pile de toutes les cartes Histoire, <strong>face cachée</strong>, classées par numéro.</li>
-        <li><strong>Cartes Énigme</strong> : Former une pile des cartes Énigme, <strong>face cachée</strong>, classées de 0 à 15.</li>
-        <li><strong>Cartes Encyclopédie</strong> : Poser toutes les cartes Encyclopédie <strong>face visible</strong>, accessibles en permanence.</li>
-        <li><strong>Matériel physique</strong> : Carte du ciel, pièces en bois, filtres colorés, posés sur la table, accessibles dès le début. Mettre les <strong>3 diapositives-photo</strong> de côté : elles serviront seulement à la toute fin.</li>
-        <li><strong>Départ</strong> : Retourner la <strong>carte Histoire n°1</strong>, sur son coin supérieur droit, lire le <strong>numéro de la carte Énigme</strong> associée et retourner cette Énigme.</li>
-      </ol>
-    </section>
-
-    <section>
-      <h3>4. Mécanique centrale</h3>
-      <h4>4.1. Lien Histoire ↔ Énigme</h4>
-      <ul>
-        <li><strong>Chaque carte Histoire</strong> :
-          <ul>
-            <li>est lue entièrement (texte d'ambiance, indices implicites),</li>
-            <li>indique en haut à droite le <strong>numéro d'une carte Énigme</strong> à retourner.</li>
-          </ul>
-        </li>
-        <li><strong>Chaque carte Énigme</strong> :
-          <ul>
-            <li>peut se résoudre à l'aide :
-              <ul>
-                <li>de la carte du ciel,</li>
-                <li>du registre,</li>
-                <li>des gabaries en bois,</li>
-                <li>des pièces triangulaires,</li>
-                <li>des filtres colorés,</li>
-                <li>et des cartes Encyclopédie.</li>
-              </ul>
-            </li>
-            <li>donne comme <strong>réponse finale un nombre</strong> (souvent un calcul ou une somme).</li>
-          </ul>
-        </li>
-      </ul>
-
-      <h4>4.2. Numéro trouvé → nouvelle carte Histoire</h4>
-      <ol>
-        <li>Quand vous pensez avoir résolu l'énigme, vous obtenez un <strong>nombre</strong>.</li>
-        <li>Ce nombre correspond au <strong>numéro d'une carte Histoire</strong>.</li>
-        <li>Procédure :
-          <ul>
-            <li>Retourner <strong>uniquement</strong> cette carte Histoire.</li>
-            <li>Regarder en haut à droite le <strong>numéro de l'Énigme suivante</strong> indiqué.</li>
-          </ul>
-        </li>
-      </ol>
-
-      <h4>4.3. Vérification : bon chemin ou erreur</h4>
-      <p>Les cartes Énigme doivent être faites <strong>dans l'ordre</strong> : 0, puis 1, puis 2, …, jusqu'à 15.</p>
-      <ul>
-        <li>Si la <strong>carte Histoire que vous venez de retourner</strong> indique en haut à droite <strong>le numéro de l'Énigme suivante dans la séquence</strong> → la solution est <strong>correcte</strong>, vous pouvez :
-          <ul>
-            <li>lire la carte Histoire,</li>
-            <li>puis retourner l'Énigme suivante indiquée.</li>
-          </ul>
-        </li>
-        <li>Si la carte Histoire <strong>n'indique pas</strong> le numéro de l'Énigme suivante attendue (par exemple vous êtes sur l'Énigme 3, et la carte Histoire ne renvoie pas vers l'Énigme 4) :
-          <ul>
-            <li>vous vous êtes <strong>trompés</strong>,</li>
-            <li><strong>ne lisez pas</strong> le texte de cette carte Histoire,</li>
-            <li>remettez-la <strong>immédiatement face cachée</strong>,</li>
-            <li>revenez à l'Énigme en cours et corrigez votre raisonnement / calcul.</li>
-          </ul>
-        </li>
-      </ul>
-      <blockquote>
-        <p><strong>C'est la règle de contrôle centrale :</strong> si l'Énigme suivante n'est pas dans l'ordre, la réponse est fausse.</p>
-      </blockquote>
-    </section>
-
-    <section>
-      <h3>5. Accès aux cartes Encyclopédie et au matériel</h3>
-      <ul>
-        <li>Les <strong>cartes Encyclopédie</strong> sont <strong>toujours disponibles</strong>. Vous pouvez les consulter à tout moment, dans n'importe quel ordre, autant de fois que nécessaire.</li>
-        <li>Les <strong>objets physiques</strong> (carte du ciel, gabaries, pièces triangulaires, registre, filtres colorés) sont utilisables <strong>dès le début</strong>. Les énigmes vous indiquent comment les employer, mais rien n'est "bloqué" mécaniquement.</li>
-        <li>Les <strong>3 diapositives-photo (étoiles d'Orion)</strong> ne servent que lors de la <strong>toute dernière énigme</strong>. Avant cela, on les laisse de côté.</li>
-      </ul>
-    </section>
-
-    <section>
-      <h3>6. Fin de partie</h3>
-      <p>La dernière énigme nécessite les trois diapositives photo. Prenez-les au moment de la faire.</p>
-    </section>
-  `;
-  rulesArticle.appendChild(rulesContent);
-  elements.rulesContainer.appendChild(rulesArticle);
-
-  // Section Tutoriel
-  const tutorialArticle = document.createElement("article");
-  tutorialArticle.id = "tutoriel-site";
-  tutorialArticle.className = "solution-entry";
-
-  const tutorialHeader = document.createElement("header");
-  const tutorialTitle = document.createElement("h2");
-  tutorialTitle.textContent = "Tutoriel du site web";
-  tutorialHeader.appendChild(tutorialTitle);
-  tutorialArticle.appendChild(tutorialHeader);
-
-  const tutorialContent = document.createElement("div");
-  tutorialContent.className = "rules-content";
-  tutorialContent.innerHTML = `
-    <section>
-      <h3>Navigation</h3>
-      <p>Utilisez les boutons en haut de la page pour naviguer entre les différentes catégories :</p>
-      <ul>
-        <li><strong>Règles</strong> : Cette page, contenant les règles du jeu et le tutoriel</li>
-        <li><strong>Histoires</strong> : Toutes les cartes Histoire</li>
-        <li><strong>Énigmes</strong> : Toutes les cartes Énigme</li>
-        <li><strong>Encyclopédie</strong> : Toutes les cartes Encyclopédie</li>
-        <li><strong>Carte du ciel</strong> : Vue dédiée à la carte du ciel interactive</li>
-        <li><strong>Épinglées</strong> : Vos cartes épinglées pour un accès rapide</li>
-        <li><strong>Solutions</strong> : Solutions détaillées des énigmes</li>
-      </ul>
-    </section>
-
-    <section>
-      <h3>Manipulation des cartes</h3>
-      <h4>Retourner une carte</h4>
-      <p>Cliquez sur l'image de la carte ou sur le bouton de retournement pour voir le recto ou le verso.</p>
-
-      <h4>Épingler une carte</h4>
-      <p>Cliquez sur le bouton d'épingle pour ajouter une carte à vos favoris. Vous pourrez ensuite la retrouver rapidement dans la catégorie "Épinglées".</p>
-
-      <h4>Inspecter une carte</h4>
-      <p>Cliquez sur le bouton d'inspection (icône d'œil) pour ouvrir une vue détaillée de la carte en plein écran. Dans cette vue :</p>
-      <ul>
-        <li>Utilisez la souris pour faire pivoter la carte en 3D</li>
-        <li>Utilisez la molette de la souris pour zoomer</li>
-        <li>Cliquez sur le bouton de retournement pour voir l'autre face</li>
-        <li>Appuyez sur Échap ou cliquez sur le bouton de fermeture pour quitter</li>
-      </ul>
-    </section>
-
-    <section>
-      <h3>Carte du ciel interactive</h3>
-      <p>Dans la section "Carte du ciel" :</p>
-      <ul>
-        <li>Utilisez la molette de la souris pour zoomer</li>
-        <li>Cliquez et glissez pour déplacer la carte</li>
-        <li>Utilisez les boutons de contrôle pour zoomer ou recentrer</li>
-        <li>Cliquez sur le bouton plein écran pour une vue immersive</li>
-      </ul>
-    </section>
-
-    <section>
-      <h3>Barre latérale</h3>
-      <p>La barre latérale affiche la liste des cartes de la catégorie actuelle. Cliquez sur une carte dans la liste pour la faire défiler dans la vue principale.</p>
-    </section>
-
-    <section>
-      <h3>Conseils d'utilisation</h3>
-      <ul>
-        <li>Épinglez les cartes importantes pour y accéder rapidement</li>
-        <li>Utilisez la vue d'inspection pour examiner les détails des cartes</li>
-        <li>Consultez les cartes Encyclopédie pour obtenir des informations utiles</li>
-        <li>Les solutions sont disponibles si vous êtes bloqué, mais essayez de résoudre les énigmes par vous-même d'abord !</li>
-      </ul>
-    </section>
-  `;
-  tutorialArticle.appendChild(tutorialContent);
-  elements.rulesContainer.appendChild(tutorialArticle);
+  // Initialiser le livre si ce n'est pas déjà fait
+  initRulesBook();
 }
+
+// Exposer la fonction de sortie du plein écran
+window.__rulesExitFullscreen = exitFullscreen;
