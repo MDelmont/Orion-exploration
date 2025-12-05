@@ -353,6 +353,33 @@ const indicesCards = [
   {
     "id": 139,
     "category": "indice",
+    "title": "Indice 13-1",
+    "typeCode": "I",
+    "rectoFile": "indices/I_R_13-1.svg",
+    "versoFile": "indices/I_V_13-1.svg",
+    "number": null
+  },
+  {
+    "id": 140,
+    "category": "indice",
+    "title": "Indice 13-2",
+    "typeCode": "I",
+    "rectoFile": "indices/I_R_13-2.svg",
+    "versoFile": "indices/I_V_13-2.svg",
+    "number": null
+  },
+  {
+    "id": 141,
+    "category": "indice",
+    "title": "Indice 13-S",
+    "typeCode": "I",
+    "rectoFile": "indices/I_R_13-S.svg",
+    "versoFile": "indices/I_V_13-S.svg",
+    "number": null
+  },
+  {
+    "id": 142,
+    "category": "indice",
     "title": "Indice 14-1",
     "typeCode": "I",
     "rectoFile": "indices/I_R_14-1.svg",
@@ -360,7 +387,7 @@ const indicesCards = [
     "number": null
   },
   {
-    "id": 140,
+    "id": 143,
     "category": "indice",
     "title": "Indice 14-2",
     "typeCode": "I",
@@ -369,7 +396,7 @@ const indicesCards = [
     "number": null
   },
   {
-    "id": 141,
+    "id": 144,
     "category": "indice",
     "title": "Indice 14-S",
     "typeCode": "I",
@@ -378,7 +405,7 @@ const indicesCards = [
     "number": null
   },
   {
-    "id": 142,
+    "id": 145,
     "category": "indice",
     "title": "Indice 15-1",
     "typeCode": "I",
@@ -387,7 +414,7 @@ const indicesCards = [
     "number": null
   },
   {
-    "id": 143,
+    "id": 146,
     "category": "indice",
     "title": "Indice 15-2",
     "typeCode": "I",
@@ -396,7 +423,7 @@ const indicesCards = [
     "number": null
   },
   {
-    "id": 144,
+    "id": 147,
     "category": "indice",
     "title": "Indice 15-S",
     "typeCode": "I",
@@ -405,7 +432,7 @@ const indicesCards = [
     "number": null
   },
   {
-    "id": 145,
+    "id": 148,
     "category": "indice",
     "title": "Indice 16-1",
     "typeCode": "I",
@@ -414,7 +441,7 @@ const indicesCards = [
     "number": null
   },
   {
-    "id": 146,
+    "id": 149,
     "category": "indice",
     "title": "Indice 16-2",
     "typeCode": "I",
@@ -423,7 +450,7 @@ const indicesCards = [
     "number": null
   },
   {
-    "id": 147,
+    "id": 150,
     "category": "indice",
     "title": "Indice 16-S",
     "typeCode": "I",
@@ -432,7 +459,7 @@ const indicesCards = [
     "number": null
   },
   {
-    "id": 148,
+    "id": 151,
     "category": "indice",
     "title": "Indice 17-1",
     "typeCode": "I",
@@ -441,7 +468,7 @@ const indicesCards = [
     "number": null
   },
   {
-    "id": 149,
+    "id": 152,
     "category": "indice",
     "title": "Indice 17-2",
     "typeCode": "I",
@@ -450,7 +477,7 @@ const indicesCards = [
     "number": null
   },
   {
-    "id": 150,
+    "id": 153,
     "category": "indice",
     "title": "Indice 17-S",
     "typeCode": "I",
@@ -459,7 +486,7 @@ const indicesCards = [
     "number": null
   },
   {
-    "id": 151,
+    "id": 154,
     "category": "indice",
     "title": "Indice T-1",
     "typeCode": "I",
@@ -468,7 +495,7 @@ const indicesCards = [
     "number": null
   },
   {
-    "id": 152,
+    "id": 155,
     "category": "indice",
     "title": "Indice T-S",
     "typeCode": "I",
