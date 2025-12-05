@@ -68,6 +68,14 @@ html {
   grid-template-columns: 1fr;
 }
 
+.rules-view #sidebar {
+  display: none;
+}
+
+.rules-view .app-shell {
+  grid-template-columns: 1fr;
+}
+
 body.sky-view {
   overflow: hidden;
 }
@@ -1295,22 +1303,7 @@ body:not(.app-started) .space-sprites-layer {
 
 /* Book Spine */
 .rules-book-spine {
-  width: 12px;
-  height: var(--rules-book-height, min(60vh, 500px));
-  background: linear-gradient(90deg, 
-    #2a1f0a 0%, 
-    #5a4530 30%, 
-    #6b4b2d 50%,
-    #5a4530 70%, 
-    #2a1f0a 100%);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-  flex-shrink: 0;
-  transition: opacity 0.5s ease, width 0.5s ease;
-}
-
-.rules-book-spine.hidden {
-  opacity: 0;
-  width: 0;
+  display: none;
 }
 
 /* Right side (flipping pages) */

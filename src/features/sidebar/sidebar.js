@@ -34,21 +34,8 @@ export function renderSidebar() {
 
   // Vue règles
   if (state.currentCategory === "regles") {
-    elements.sidebarSubtitle.textContent = "Navigation";
+    elements.sidebarSubtitle.textContent = "Vue dédiée aux règles";
     setHidden(elements.sidebarEmpty, true);
-    const sections = [
-      { id: "regles-jeu", title: "Règles du jeu" },
-      { id: "tutoriel-site", title: "Tutoriel du site" }
-    ];
-    sections.forEach((section) => {
-      const item = document.createElement("li");
-      item.textContent = section.title;
-      item.addEventListener("click", () => {
-        const el = document.getElementById(section.id);
-        if (el) el.scrollIntoView({ behavior: "smooth" });
-      });
-      elements.sidebarList.appendChild(item);
-    });
     return;
   }
 

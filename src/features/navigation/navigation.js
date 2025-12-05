@@ -54,9 +54,14 @@ export function updateNavigationState() {
  */
 export function updateLayoutForCategory() {
   const isSkyView = state.currentCategory === "carte";
+  const isRulesView = state.currentCategory === "regles";
   document.body.classList.toggle("sky-view", isSkyView);
+  document.body.classList.toggle("rules-view", isRulesView);
   if (!isSkyView && typeof window.__skyExitFullscreen === "function") {
     window.__skyExitFullscreen();
+  }
+  if (!isRulesView && typeof window.__rulesExitFullscreen === "function") {
+    window.__rulesExitFullscreen();
   }
 }
 
