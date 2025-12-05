@@ -15,7 +15,7 @@ const histoireCards = [
         typeCode: 'H',
         number: '48',
         rectoFile: 'H_R_La-completion-du-trou_48.svg',
-        versoFile: 'H_V_La-complétion-du-trou_48.svg'
+        versoFile: 'H_V_La-completion-du-trou_48.svg'
     },
     {
         id: 202,
