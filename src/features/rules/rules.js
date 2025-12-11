@@ -10,8 +10,7 @@ import { clamp } from "../../utils/dom.js";
 const rulesPages = [
   { name: 'Couverture', file: 'images/regles/couverture.svg' },
   { name: 'Page 1', file: 'images/regles/page-1.svg' },
-  { name: 'Page 2', file: 'images/regles/page-2.svg' },
-  { name: 'Page 3', file: 'images/regles/page-3.svg' }
+  { name: 'Page 2', file: 'images/regles/page-2.svg' }
 ];
 
 // État du livre
